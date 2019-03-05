@@ -1,0 +1,49 @@
+.foot{
+    background: #e2e2e2;
+    text-align: center;
+    margin-top: 70px;
+    height: 100px;
+    line-height: 100px;
+}
+.card-header{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.card-body-top{
+    margin-top: 50px;
+}
+
+.icon-stytle{
+    font-size: 50px;
+    margin-left: 100px;
+    margin-top: 10px;
+}
+.card-a a:hover{
+    font-size: 100px;
+}
+
+.question{
+    font-size: 18px;
+    font-weight: 100;
+    /*margin-left: 30px;*/
+    margin-top: 20px;
+}
+.question-body{
+    /*margin-left: 30px;*/
+    margin-top: 5px;
+}
+.choice-body{
+    margin: 10px;
+}
+.choice-item{
+    margin-left: 10px;
+}
+.choice-button{
+    /*margin-left: 50px;*/
+    margin-top: 20px;
+    text-align: center;
+}
+.layui-btn{
+    margin-right: 40px;
+}

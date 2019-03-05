@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>driver_exame</contextName>
+	<property name="contextName" value="driver_exame" />
+	<property name="logHome" value="/var/log/driver_exame" />
+	<property name="CONSOLE_LOG_PATTERN"
+			  value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) |%highlight(%-5level) |%blue(%thread) |%blue(%file:%line) |%cyan(%msg%n)"/><!-- |%green(%logger)-->
+
+	<jmxConfigurator />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+		<!--<layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+			<jsonFormatter
+					class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+				<prettyPrint>true</prettyPrint>
+			</jsonFormatter>
+			<timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+		</layout>-->
+	</appender>
+
+	<!-- 输出到日志文件 -->
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
+		<!--<layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+			<jsonFormatter
+					class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+				<prettyPrint>true</prettyPrint>
+			</jsonFormatter>
+			<timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+		</layout>-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${logHome}/${contextName}.%d{yyyyMMdd}.log</FileNamePattern>
+			<MaxHistory>24</MaxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="com.alibaba.druid" level="ERROR"/>
+
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+	</root>
+
+</configuration>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>模拟练习</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" href="../static/css/comment.css" th:href="@{/static/css/comment.css}">
+    <link rel="stylesheet" th:href="@{/static/css/font.css}">
+    <link rel="stylesheet" href="../static/layui/css/layui.css" th:href="@{/static/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/static/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/jquery-3.3.1/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/static/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/static/js/xadmin.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/commons.js}"></script>
+
+
+    <script th:inline="javascript">
+        var basePath = /*[[${#httpServletRequest.getContextPath()}]]*/;
+
+        function loginOut() {
+            $.ajax({
+                url: basePath + "/api/system/logout",
+                type: "get",
+                success: function (data) {
+                    window.location = (basePath + "/login");
+                },
+                error: function (data) {
+
+                    alert("登出失败")
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+<!-- 顶部开始 -->
+<div th:replace="nav :: nav"></div>
+<!--中部开始-->
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-card">
+            <div class="layui-card-header"><span class="card-header">模拟练习</span></div>
+
+            <div class="layui-card-body">
+                <div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="demo">
+                    <div class="layui-progress-bar layui-bg-green progress" lay-percent=""></div>
+                </div>
+                <div class="layui-elem-quote  layui-quote-nm question"></div>
+
+                <form class="layui-form" action="">
+                    <div class="question-body layui-quote-nm">
+                        <div class="choice-body">
+                            <input class="choiceA" name="choice" type="radio" value="A">
+                            <span class="choice-itemA">B</span>
+                        </div>
+                        <div class="choice-body">
+                            <input class="choiceB" name="choice" type="radio" value="B">
+                            <span class="choice-itemB">B</span>
+                        </div>
+                        <div class="choice-body">
+                            <input class="choiceC" name="choice" type="radio" value="C">
+                            <span class="choice-itemC">C</span>
+                        </div>
+                        <div class="choice-body">
+                            <input class="choiceD" name="choice" type="radio" value="D">
+                            <span class="choice-itemD">D</span>
+                        </div>
+                    </div>
+                    <div class="choice-button">
+                        <a class="layui-btn button-before" onclick="before()">上一题</a>
+                        <a class="layui-btn button-next site-demo-active" onclick="next()">下一题</a>
+                        <span class="layui-btn  layui-btn-warm" onclick="getAnswer()">本题答案</span>
+                        <span class="layui-btn  layui-btn-danger endQuestion" data-method="notice"
+                              onclick="endQuestion()">结束练习</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--中部结束-->
+<!--底部-->
+<div class="footer">
+    <div>Copyright ©qinpeng All Rights Reserved</div>
+</div>
+</body>
+<script th:inline="javascript">
+    var basePath = /*[[${#httpServletRequest.getContextPath()}]]*/;
+    var pgeNo = 1;
+    var answer;
+    var number;
+    var form;
+    var rightCount = 0;
+    var totalCount;
+    var oldCount;
+    //利用localStorage防止页面动态添加数据刷新后数据丢失,防止刷新后页码归0
+    if (localStorage.getItem("pgeNo") !== null) {
+        pgeNo = localStorage.getItem("pgeNo");
+    }
+    //保存题号，刷新时回显选择
+    if (localStorage.getItem("itemNumber") !== null) {
+        number = localStorage.getItem("itemNumber");
+    }
+    if (localStorage.getItem("rightCount") !== null) {
+        rightCount = localStorage.getItem("rightCount");
+    }
+    if (localStorage.getItem("totalCount") !== null) {
+        totalCount = localStorage.getItem("totalCount");
+    }
+
+    $(document).ready(function () {
+        getData(pgeNo);
+        layui.use('form', function () {
+            form = layui.form;
+        });
+        layui.use('element', function () {
+            var $ = layui.jquery
+                , element = layui.element;
+            $('.progress').attr("lay-percent", number-1 + '/' + totalCount);
+            //需要重新渲染
+            element.render('progress');
+        });
+        if (localStorage.getItem("checked_" + number) !== null) {
+            var value = localStorage.getItem("checked_" + number);
+            //layui的表单更新后需要手动渲染否则看不到效果，另外使用prop而不是attr不然时而有效时而无效
+            $("input[name='choice'][value='" + value + "']").prop("checked", true);
+            form.render();
+        }
+    });
+
+
+    function next() {
+        pgeNo++;
+        var checkedValue = $("input[name='choice']:checked").val();
+        localStorage.setItem("pgeNo", pgeNo);
+        //已经选过且选择正确
+        if (localStorage.getItem("checked_" + number) !== null && answer === checkedValue) {
+            //点击上一题，选择正确的再点下一题会出现
+            if (rightCount < oldCount) {
+                rightCount++;
+            }
+//            //当重新选择，然而每次都选错，最终会导致oldCount和rightCount相等，
+//            // 这样在判断时可能会出错，所以让oldCount始终比rightCount大
+        } else if (localStorage.getItem("checked_" + number) !== null && answer !== checkedValue) {
+            //已经选过，但再次选择时选项与答案不相符需要减分
+            if (rightCount >= 1) {
+                //保留原始的分数，方便再次选择正确时计数判断
+                oldCount = rightCount;
+                rightCount--;
+            }
+            if (rightCount === 0) {
+                console.info("清除");
+                localStorage.clear();
+            }
+        } else {
+            //没有选择过，判断答案是否正确
+            if (answer === checkedValue) {
+                rightCount++;
+            }else {
+                saveErrorQuestion()
+            }
+        }
+        //保留选择，以便回显
+        localStorage.setItem("checked_" + number, checkedValue);
+        //点击下一题，如果之前已经选择则直接取
+        var temp = number + 1;
+
+        if (localStorage.getItem("checked_" + temp) !== null) {
+            var value = localStorage.getItem("checked_" + temp);
+            //layui的表单更新后需要手动渲染否则看不到效果，另外使用prop而不是attr不然时而有效时而无效
+            $("input[name='choice'][value='" + value + "']").prop("checked", true);
+            form.render();
+        } else {
+            if (!temp > totalCount) {
+                $("input[name='choice']").prop("checked", false);
+                form.render();
+            }
+        }
+        getData(pgeNo);
+        localStorage.setItem("itemNumber", temp);
+        localStorage.setItem("rightCount", rightCount);
+        layui.use('element', function () {
+            var $ = layui.jquery
+                , element = layui.element;
+            $('.progress').attr("lay-percent", number + '/' + totalCount);
+            //需要重新渲染
+            element.render('progress');
+        });
+
+    }
+
+    function before() {
+        var num = number - 1;
+        localStorage.setItem("itemNumber", num);
+        if (pgeNo <= 1) {
+            pgeNo = 1;
+        } else {
+            pgeNo--;
+        }
+        localStorage.setItem("pgeNo", pgeNo);
+        getData(pgeNo);
+        //获得之前的选择，回显
+        var value = localStorage.getItem("checked_" + num);
+        //layui的表单更新后需要手动渲染否则看不到效果，另外使用prop而不是attr不然时而有效时而无效
+        $("input[name='choice'][value='" + value + "']").prop("checked", true);
+        //重新渲染表单
+        form.render();
+
+    }
+
+
+    function getData(currentPageNo, url) {
+        $.ajax({
+            url: basePath + "/simulate/getSimulated?currentPageNo=" + currentPageNo,
+            type: "get",
+            success: function (data) {
+                console.log(JSON.stringify(data));
+                var objs = eval(data);
+                //题目
+                var comment = objs.data[0].comment;
+                var choice = objs.data[0].choice;
+                number = objs.data[0].id;
+                answer = objs.data[0].answer;
+                totalCount = objs.totalCount;
+                localStorage.setItem("answer_"+number,answer);
+                localStorage.setItem("totalCount", totalCount);
+                //末尾
+                if (totalCount < pgeNo) {
+
+                    $('.button-next').addClass("layui-btn-disabled");
+                    $('.button-next').attr("disabled", true);
+                    //阻止点击事件
+                    $('.button-next').attr("onclick", 'return false');
+                } else {
+                    $('.button-next').removeClass("layui-btn-disabled");
+                    $('.button-next').attr("disabled", false);
+                    //添加点击事件，加上引号否则会一直调用
+                    $('.button-next').attr("onclick", 'next()');
+                }
+                pgeNo = objs.currentPageNo;
+                //将字符串转换为json对象
+                var obj = JSON.parse(choice);
+                //选项
+                var choiceA = obj.A;
+                var choiceB = obj.B;
+                var choiceC = obj.C;
+                var choiceD = obj.D;
+                $('.question').text(number + '、' + comment);
+                $('.choice-itemA').text(choiceA);
+                $('.choice-itemB').text(choiceB);
+                $('.choice-itemC').text(choiceC);
+                $('.choice-itemD').text(choiceD);
+            },
+            error: function (data) {
+                alert("系统异常");
+            }
+
+        });
+    }
+
+
+    /**
+     * 进度条
+     */
+    layui.use('element', function () {
+        var $ = layui.jquery
+            , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        //触发事件
+        var active = {
+            setPercent: function () {
+                //设置50%进度
+                element.progress('demo', '20 / 100')
+            }
+            , loading: function (othis) {
+                var DISABLED = 'layui-btn-disabled';
+                if (othis.hasClass(DISABLED)) return;
+
+                //模拟loading
+                var n = 0, timer = setInterval(function () {
+                    n = n + Math.random() * 10 | 0;
+                    if (n > 100) {
+                        n = 100;
+                        clearInterval(timer);
+                        othis.removeClass(DISABLED);
+                    }
+                    element.progress('demo', n + '%');
+                }, 300 + Math.random() * 1000);
+
+                othis.addClass(DISABLED);
+            },
+            notice: function () {
+
+            }
+        };
+        //点击事件
+        $('.site-demo-active').on('click', function () {
+            var othis = $(this), type = $(this).data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        });
+
+        $('.endQuestion').on('click', function () {
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+    });
+
+    /**
+     * 保存错题
+     */
+    function saveErrorQuestion(id) {
+        $.ajax({
+            url:''
+            ,type:'post'
+            ,contentType:''
+            ,success:function (data) {
+
+            }
+            ,error:function (data) {
+
+            }
+        });
+    }
+
+
+</script>
+</html>

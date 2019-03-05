@@ -1,0 +1,32 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="nav" th:fragment="nav">
+    <div class="container">
+        <div class="logo"><a href="/index">驾考模拟理论考试系统</a></div>
+        <ul class="layui-nav left fast-add" lay-filter="">
+            <!--<li class="layui-nav-item">-->
+                <!--&lt;!&ndash;<a href="/index" style="font-size: large">首页</a>&ndash;&gt;-->
+                <!--&lt;!&ndash;<dl class="layui-nav-child"> &lt;!&ndash; 二级菜单 &ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;<dd><a onclick="x_admin_show('资讯','http://www.baidu.com')"><i class="iconfont">&#xe6a2;</i>资讯</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</dd>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<dd><a onclick="x_admin_show('图片','http://www.baidu.com')"><i class="iconfont">&#xe6a8;</i>图片</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</dd>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<dd><a onclick="x_admin_show('用户','http://www.baidu.com')"><i class="iconfont">&#xe6b8;</i>用户</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</dd>&ndash;&gt;-->
+                <!--&lt;!&ndash;</dl>&ndash;&gt;-->
+            <!--</li>-->
+        </ul>
+        <ul class="layui-nav right" lay-filter="">
+            <li class="layui-nav-item">
+                <a href="javascript:;">admin</a>
+                <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                    <dd><a onclick="x_admin_show('个人信息','http://www.baidu.com')">个人信息</a></dd>
+                    <dd><a onclick="x_admin_show('个人信息','http://www.baidu.com')">切换帐号</a></dd>
+                    <dd><a href="javascript:;" onclick="loginOut()">退出</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
