@@ -24,41 +24,59 @@ public class BaseController {
     @Autowired
     private SimulatedExerciseMapper exerciseMapper;
 
+    /**
+     * 管理后台页面
+     * @return
+     */
     @RequestMapping(value = "admin/index")
     public String index(){
         return "admin-index";
     }
 
+    /**
+     * 前台页面
+     * @return
+     */
     @RequestMapping(value = "index")
     public String frontIndex(){
         return "index";
     }
 
+    /**
+     * 登录页面
+     * @return
+     */
     @RequestMapping(value = "login",method = RequestMethod.GET)
     public String login(){
         return "login";
     }
+
     /** 导航 */
     @RequestMapping(value = "nav",method = RequestMethod.GET)
     public String nav(){
         return "nav";
     }
 
-//    @RequestMapping(value = "/getSimulated")
-//    @ResponseBody
-//    public ApiResult<List<SimulatedExercise>> getSimulatedExercise(@RequestParam(value = "currentPageNo",defaultValue = "0") Integer currentPageNo,
-//                                                                   @RequestParam(value = "pageSize",defaultValue = "10")  Integer pageSize){
-//        try {
-//            return simulatedExerciseService.getSimulatedExercise(currentPageNo,pageSize);
-//        } catch (Exception e) {
-//            logger.error("SimulatedExerciseController error {}",e);
-//        }
-//        return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
-//    }
-    @ResponseBody
-    @RequestMapping("test")
-    public List<SimulatedExercise> TEST(){
-        return exerciseMapper.selectAll();
+    /** 导航 */
+    @RequestMapping(value = "userInfo",method = RequestMethod.GET)
+    public String userInfo(){
+        return "userInfo";
     }
+
+    /** 导航 */
+    @RequestMapping(value = "order-list",method = RequestMethod.GET)
+    public String order(){
+        return "order-list";
+    }
+
+    /** 导航 */
+    @RequestMapping(value = "changePwd",method = RequestMethod.GET)
+    public String memberAdd(){
+        return "change-pwd";
+    }
+
+
+
+
 
 }

@@ -8,6 +8,7 @@ import com.sjqp.driverexame.entity.RoleModule;
 import com.sjqp.driverexame.entity.UserInfo;
 import com.sjqp.driverexame.inc.CacheKey;
 import com.sjqp.driverexame.inc.Const;
+import com.sjqp.driverexame.service.RedisService;
 import com.sjqp.driverexame.util.ApiResult;
 import com.sjqp.driverexame.util.MD5Encoder;
 import com.sjqp.driverexame.util.SecurityCodeUtil;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 import javax.imageio.ImageIO;
 import javax.servlet.*;
@@ -40,7 +40,7 @@ public class LoginFilter implements Filter {
     private Logger logger = LoggerFactory.getLogger(LoginFilter.class);
 
     @Autowired
-    private JedisPool jedisPool;
+    private RedisService redisService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -227,7 +227,7 @@ public class LoginFilter implements Filter {
             /**
              * 从缓存获得角色模块信息
              */
-            List<RoleModule> roleModuleList = JSON.parseArray(jedisPool.getResource().get(CacheKey.ROLE_MODULE), RoleModule.class);
+            List<RoleModule> roleModuleList = JSON.parseArray(redisService.get(CacheKey.ROLE_MODULE), RoleModule.class);
             if (roleId != null && !CollectionUtils.isEmpty(roleModuleList)) {
                 for (RoleModule roleModule : roleModuleList) {
                     if (roleId.equals(roleModule.getRoleId())) {
@@ -239,7 +239,7 @@ public class LoginFilter implements Filter {
             /**
              * 模块信息
              */
-            List<Module> moduleList = JSON.parseArray(jedisPool.getResource().get(CacheKey.MODULE), Module.class);
+            List<Module> moduleList = JSON.parseArray(redisService.get(CacheKey.MODULE), Module.class);
             //获得对应模块Id的url前缀
             List<String> curlList = getPrfixUrl(moduleList,moduleIdList);
             if (!CollectionUtils.isEmpty(curlList)) {
@@ -311,7 +311,7 @@ public class LoginFilter implements Filter {
 
         ApiResult<UserInfo> apiResult = new ApiResult<UserInfo>();
         try {
-            Jedis jedis = jedisPool.getResource();
+
 
             //判断验证码是否正确
             if (StringUtils.isNotBlank(securityCode)) {
@@ -322,7 +322,7 @@ public class LoginFilter implements Filter {
                 }
             }
             //用户信息
-            List<UserInfo> userInfoList = JSON.parseArray(jedis.get(CacheKey.USER_INFO), UserInfo.class);
+            List<UserInfo> userInfoList = JSON.parseArray(redisService.get(CacheKey.USER_INFO), UserInfo.class);
             if (!CollectionUtils.isEmpty(userInfoList)) {
                 for (UserInfo userInfo : userInfoList) {
                     if (userName.equals(userInfo.getUsername()) && pwdMd5.equals(userInfo.getPassword())) {

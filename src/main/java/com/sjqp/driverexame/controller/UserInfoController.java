@@ -1,6 +1,8 @@
 package com.sjqp.driverexame.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sjqp.driverexame.entity.UserInfo;
+import com.sjqp.driverexame.entity.dto.UserInfoDto;
 import com.sjqp.driverexame.service.UserInfoService;
 import com.sjqp.driverexame.util.ApiResult;
 import com.sjqp.driverexame.util.MD5Encoder;
@@ -50,15 +52,30 @@ public class UserInfoController {
     private final String ADMIN = "admin";
 
     @GetMapping(value = "/getUsername", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ApiResult<List<UserInfo>> getUsername(@RequestParam(defaultValue = "1") Integer currentNo,@RequestParam(defaultValue = "10")Integer pageSize) {
+    public Object getUsername(@RequestParam(defaultValue = "1") Integer currentNo,@RequestParam(defaultValue = "10")Integer pageSize) {
+        JSONObject jsonObject = new JSONObject();
         ApiResult<List<UserInfo>> apiResult = new ApiResult<>(ApiResult.FAIL_RESULT);
         try {
-            apiResult = userInfoService.getUsername(currentNo,pageSize);
+            apiResult = userInfoService.getUserInfo(currentNo,pageSize);
+//            {
+//                "status": 0,
+//                    "message": "",
+//                    "total": 180,
+//                    "data": {
+//                "item": [{}, {}]
+//            }
+//            }
+            jsonObject.put("code",apiResult.getStatus());
+            jsonObject.put("message","");
+            jsonObject.put("total",apiResult.getTotalCount());
+            jsonObject.put("data",apiResult.getData());
+
         } catch (Exception e) {
             logger.error("UserInfoController getUsername e:{}", e);
             apiResult.setDescription("系统异常");
         }
-        return apiResult;
+        logger.info(jsonObject.toJSONString());
+        return jsonObject;
     }
 
     @GetMapping(value = "/getUserInfoByName", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -76,14 +93,13 @@ public class UserInfoController {
         return apiResult;
     }
 
-    @PutMapping(value = "/updatePwd", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ApiResult updatePassword(@RequestBody Map map) {
+    @PutMapping(value = "/updatePwd/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ApiResult updatePassword(@PathVariable Integer userId,@RequestBody UserInfoDto userInfoDto) {
         ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
         try {
-            String oldPwd = map.containsKey("oldPwd") ? (String) map.get("oldPwd") : null;
-            String newPwd = map.containsKey("newPwd") ? (String) map.get("newPwd") : null;
-            String role = map.containsKey("role") ? (String) map.get("role") : null;
-            Integer userId = map.containsKey("userId") ? (Integer) map.get("userId") : null;
+            String oldPwd = userInfoDto.getOldPwd();
+            String newPwd = userInfoDto.getNewPwd();
+            String role = userInfoDto.getRole();
             if (Objects.isNull(userId)) {
                 apiResult.setDescription("userId不能为空");
                 return apiResult;

@@ -27,7 +27,7 @@ public interface UserInfoService {
      * 获得所有用户的用户名
      * @return
      */
-    ApiResult<List<UserInfo>> getUsername(Integer currentNo,Integer pageSize);
+    ApiResult<List<UserInfo>> getUserInfo(Integer currentNo,Integer pageSize);
 
     /**
      * 通过用户名获得用户信息

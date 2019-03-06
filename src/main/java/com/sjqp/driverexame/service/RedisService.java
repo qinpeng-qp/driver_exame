@@ -1,6 +1,7 @@
 package com.sjqp.driverexame.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -9,17 +10,19 @@ import redis.clients.jedis.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @author qinpeng
+ */
+@Service
 public class RedisService {
 
 	@Autowired
 	private JedisPool jedisPool;
 
-	public boolean set(String key, String value, int db) {
+	public boolean set(String key, String value) {
 		boolean flag = false;
 		Jedis jedis = this.jedisPool.getResource();
 		try {
-			jedis.select(db);
 			String rs = jedis.set(key, value);
 			if (rs.equals("ok")) {
 				flag = true;
@@ -53,10 +56,9 @@ public class RedisService {
 
 	}
 
-	public String get(String key, int db) {
+	public String get(String key) {
 		Jedis jedis = this.jedisPool.getResource();
 		try {
-			jedis.select(db);
 			return jedis.get(key);
 		} catch (Exception e) {
 			e.printStackTrace();

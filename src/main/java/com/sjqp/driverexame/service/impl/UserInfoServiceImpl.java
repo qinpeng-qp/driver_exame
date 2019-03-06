@@ -74,7 +74,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ApiResult<List<UserInfo>> getUsername(Integer currentNo,Integer pageSize) {
+    public ApiResult<List<UserInfo>> getUserInfo(Integer currentNo,Integer pageSize) {
         ApiResult<List<UserInfo>> apiResult = new ApiResult<>(ApiResult.FAIL_RESULT);
         try {
             PageHelper.startPage(currentNo,pageSize);
