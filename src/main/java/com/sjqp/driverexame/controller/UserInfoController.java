@@ -57,16 +57,9 @@ public class UserInfoController {
         ApiResult<List<UserInfo>> apiResult = new ApiResult<>(ApiResult.FAIL_RESULT);
         try {
             apiResult = userInfoService.getUserInfo(currentNo,pageSize);
-//            {
-//                "status": 0,
-//                    "message": "",
-//                    "total": 180,
-//                    "data": {
-//                "item": [{}, {}]
-//            }
-//            }
+            //layui表格渲染数据格式
             jsonObject.put("code",apiResult.getStatus());
-            jsonObject.put("message","");
+            jsonObject.put("message",apiResult.getDescription());
             jsonObject.put("total",apiResult.getTotalCount());
             jsonObject.put("data",apiResult.getData());
 

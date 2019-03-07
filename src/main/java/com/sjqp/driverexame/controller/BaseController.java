@@ -69,13 +69,17 @@ public class BaseController {
         return "order-list";
     }
 
-    /** 导航 */
+    /** 修改密码页面 */
     @RequestMapping(value = "changePwd",method = RequestMethod.GET)
     public String memberAdd(){
         return "change-pwd";
     }
 
-
+    /** 创建用户页面 */
+    @RequestMapping(value = "user-add",method = RequestMethod.GET)
+    public String userAdd(){
+        return "user-add";
+    }
 
 
 
