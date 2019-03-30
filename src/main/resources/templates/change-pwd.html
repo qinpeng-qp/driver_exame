@@ -83,7 +83,7 @@
                   ,contentType:'application/json;charset=UTF-8'
                   ,dataType:'json'
                   ,success:function (res) {
-                      layer.alert(res.description, {icon: 6},function () {
+                      layer.alert(res.msg, {icon: 6},function () {
                           // 获得frame索引
                           var index = parent.layer.getFrameIndex(window.name);
                           //关闭当前frame

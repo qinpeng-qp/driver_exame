@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**
- * @author jiashiran on 2019/1/8.
+ * @author qinpeng on 2019/1/8.
  */
 public class SecurityCodeUtil {
 

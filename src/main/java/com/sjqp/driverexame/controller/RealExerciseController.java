@@ -6,10 +6,9 @@ import com.sjqp.driverexame.util.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,10 +33,22 @@ public class RealExerciseController {
 
     @RequestMapping(value = "getReal")
     @ResponseBody
-    public ApiResult<List<RealExercise>> getRealExercise(@RequestParam(value = "currentPageNo",defaultValue = "1") Integer currentPageNo,
-                                                         @RequestParam(value = "pageSize",defaultValue = "1")  Integer pageSize){
+    public ApiResult<List<RealExercise>> getRealExercise(@RequestParam(value = "page",defaultValue = "1") Integer currentPageNo,
+                                                         @RequestParam(value = "limit",defaultValue = "1")  Integer pageSize){
         try {
             return   realExerciseService.getRealExercise(currentPageNo, pageSize);
+        } catch (Exception e) {
+            logger.error("RealExerciseController error {}",e);
+        }
+        //"id":3,"questionId":null,"comment":"第三题","createTime":"2019-02-12T07:34:50.849+0000","answer":"C","choice":"{\"A\": \"酒驾\", \"B\": \"超速\", \"C\": \"违章\", \"D\": \"逃逸\"}"}
+        return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
+    }
+
+    @DeleteMapping(value = "deleteReal",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiResult<List<RealExercise>> deleteRealExercise(@RequestBody List<RealExercise> realExerciseList){
+        try {
+            return   realExerciseService.deleteRealExercise(realExerciseList);
         } catch (Exception e) {
             logger.error("RealExerciseController error {}",e);
         }

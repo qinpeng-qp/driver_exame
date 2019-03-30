@@ -3,16 +3,15 @@ package com.sjqp.driverexame.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sjqp.driverexame.entity.ErrorExercise;
-import com.sjqp.driverexame.entity.RealExercise;
 import com.sjqp.driverexame.mapper.ErrorExerciseMapper;
-import com.sjqp.driverexame.mapper.RealExerciseMapper;
 import com.sjqp.driverexame.service.ErrorExerciseService;
-import com.sjqp.driverexame.service.RealExerciseService;
 import com.sjqp.driverexame.util.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +40,7 @@ public class ErrorExerciseServiceImpl implements ErrorExerciseService {
                 ApiResult<List<ErrorExercise>> apiResult = new ApiResult<>(ApiResult.SUCCESS_RESULT);
                 apiResult.setData(pageInfo.getList());
                 apiResult.setCurrentPageNo(pageInfo.getPageNum());
-                apiResult.setTotalCount((int) pageInfo.getTotal());
+                apiResult.setTotal((int) pageInfo.getTotal());
                 apiResult.setPageSize(pageInfo.getPageSize());
                 return apiResult;
             }
@@ -51,4 +50,44 @@ public class ErrorExerciseServiceImpl implements ErrorExerciseService {
         }
         return new ApiResult(ApiResult.FAIL_RESULT,"系统异常");
     }
+    @Override
+    public ApiResult saveErrorExercise(List<ErrorExercise> errorExerciseList) {
+        ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
+        try {
+            int row = errorExerciseMapper.insertList(errorExerciseList);
+            if (row > 0){
+                apiResult.setData(ApiResult.SUCCESS_RESULT);
+                apiResult.setMsg("保存成功");
+            }
+        } catch (Exception e) {
+            logger.error("saveErrorExercise e{}",e);
+            return new ApiResult(ApiResult.FAIL_RESULT,"系统异常");
+        }
+        return apiResult;
+    }
+
+    /**
+     * 批量删除此处运用到spring的事物
+     * @param errorExerciseList
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResult deleteErrorExercise(List<ErrorExercise> errorExerciseList) {
+        ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
+        try {
+            if (!CollectionUtils.isEmpty(errorExerciseList)){
+                for (ErrorExercise realExercise : errorExerciseList){
+                    errorExerciseMapper.deleteByPrimaryKey(realExercise);
+                }
+            }
+            apiResult.setData(ApiResult.SUCCESS_RESULT);
+            apiResult.setMsg("删除成功");
+        } catch (Exception e) {
+            logger.error("deleteErrorExercise e{}",e);
+            throw e;
+        }
+        return apiResult;
+    }
+
 }

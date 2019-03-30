@@ -1,5 +1,6 @@
 package com.sjqp.driverexame.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sjqp.driverexame.entity.UserInfo;
 import com.sjqp.driverexame.entity.dto.UserInfoDto;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -52,23 +52,16 @@ public class UserInfoController {
     private final String ADMIN = "admin";
 
     @GetMapping(value = "/getUsername", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Object getUsername(@RequestParam(defaultValue = "1") Integer currentNo,@RequestParam(defaultValue = "10")Integer pageSize) {
-        JSONObject jsonObject = new JSONObject();
+    public ApiResult getUsername(@RequestParam(defaultValue = "1") Integer currentNo,@RequestParam(defaultValue = "10")Integer pageSize) {
         ApiResult<List<UserInfo>> apiResult = new ApiResult<>(ApiResult.FAIL_RESULT);
         try {
             apiResult = userInfoService.getUserInfo(currentNo,pageSize);
-            //layui表格渲染数据格式
-            jsonObject.put("code",apiResult.getStatus());
-            jsonObject.put("message",apiResult.getDescription());
-            jsonObject.put("total",apiResult.getTotalCount());
-            jsonObject.put("data",apiResult.getData());
-
         } catch (Exception e) {
             logger.error("UserInfoController getUsername e:{}", e);
-            apiResult.setDescription("系统异常");
+            apiResult.setMsg("系统异常");
         }
-        logger.info(jsonObject.toJSONString());
-        return jsonObject;
+        logger.info(JSON.toJSONString(apiResult));
+        return apiResult;
     }
 
     @GetMapping(value = "/getUserInfoByName", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -81,7 +74,7 @@ public class UserInfoController {
             apiResult = userInfoService.getUserInfoByName(username);
         } catch (Exception e) {
             logger.error("UserInfoController getUserInfoByName e:{}", e);
-            apiResult.setDescription("系统异常");
+            apiResult.setMsg("系统异常");
         }
         return apiResult;
     }
@@ -94,19 +87,19 @@ public class UserInfoController {
             String newPwd = userInfoDto.getNewPwd();
             String role = userInfoDto.getRole();
             if (Objects.isNull(userId)) {
-                apiResult.setDescription("userId不能为空");
+                apiResult.setMsg("userId不能为空");
                 return apiResult;
             }
             if (Objects.isNull(role)) {
-                apiResult.setDescription("角色不能为空");
+                apiResult.setMsg("角色不能为空");
                 return apiResult;
             }
             if (Objects.isNull(newPwd)) {
-                apiResult.setDescription("新密码不能为空");
+                apiResult.setMsg("新密码不能为空");
                 return apiResult;
             } else {
                 if (!pwdPattern.matcher(newPwd).find()) {
-                    apiResult.setDescription("密码长度为6到16位且必需为数字、字母、符号的组合");
+                    apiResult.setMsg("密码长度为6到16位且必需为数字、字母、符号的组合");
                     return apiResult;
                 }
             }
@@ -115,7 +108,7 @@ public class UserInfoController {
                 apiResult = userInfoService.changePassword(userId, null, newPwd, role);
             } else {
                 if (Objects.isNull(oldPwd)) {
-                    apiResult.setDescription("旧密码不能为空");
+                    apiResult.setMsg("旧密码不能为空");
                     return apiResult;
                 } else {
                     apiResult = userInfoService.changePassword(Integer.valueOf(userId), oldPwd, newPwd, role);
@@ -123,7 +116,7 @@ public class UserInfoController {
             }
         } catch (Exception e) {
             logger.error("UserInfoController updatePwd e:{}", e);
-            apiResult.setDescription("系统异常");
+            apiResult.setMsg("系统异常");
         }
         return apiResult;
     }
@@ -155,7 +148,7 @@ public class UserInfoController {
 
         } catch (Exception e) {
             logger.error("UserInfoController createAccount e:{}", e);
-            apiResult.setDescription("系统异常");
+            apiResult.setMsg("系统异常");
         }
         return apiResult;
     }
@@ -171,7 +164,7 @@ public class UserInfoController {
             apiResult = userInfoService.deleteAccount(userId);
         } catch (Exception e) {
             logger.error("UserInfoController deleteAccount e:{}", e);
-            apiResult.setDescription("系统异常");
+            apiResult.setMsg("系统异常");
         }
         return apiResult;
     }

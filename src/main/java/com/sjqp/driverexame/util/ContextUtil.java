@@ -10,12 +10,6 @@ import javax.annotation.PostConstruct;
 /**
  * 获取spring的ApplicationContext。通过ApplicationContext可以获取在spring配置文件中配置的类。
  * <p>
- * 文件名： ContextUtil.java
- * <p>
- * Copyright (c) 2006-2010 T&I Net Communication CO.,LTD.  All rights reserved.
- *
- * @version 1.0
- * @since 1.0
  */
 @Component
 public class ContextUtil implements ApplicationContextAware {

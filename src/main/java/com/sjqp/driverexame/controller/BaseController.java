@@ -6,11 +6,14 @@ import com.sjqp.driverexame.service.SimulatedExerciseService;
 import com.sjqp.driverexame.util.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -81,6 +84,28 @@ public class BaseController {
         return "user-add";
     }
 
+    /** 真题列表 */
+    @RequestMapping(value = "real-exercise-list",method = RequestMethod.GET)
+    public String realExerciseList(){
+        return "real-exercise-list";
+    }
 
+    /** 错题列表 */
+    @RequestMapping(value = "error-exercise-list",method = RequestMethod.GET)
+    public String errorExerciseList(){
+        return "error-exercise-list";
+    }
+
+    /** 模拟练习题列表 */
+    @RequestMapping(value = "simulated-exercise-list",method = RequestMethod.GET)
+    public String simulatedExerciseList(){
+        return "simulated-exercise-list";
+    }
+    /**批量上传题目页面*/
+    @RequestMapping(value = "upload-question",method = RequestMethod.GET)
+    public String uploadQuestion(HttpServletRequest request, Model model){
+        model.addAttribute("questionType",request.getParameter("questionType"));
+        return "upload-question";
+    }
 
 }

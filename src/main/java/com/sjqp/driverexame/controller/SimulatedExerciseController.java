@@ -35,8 +35,8 @@ public class SimulatedExerciseController {
 
     @RequestMapping(value = "getSimulated")
     @ResponseBody
-    public ApiResult<List<SimulatedExercise>> getSimulatedExercise(@RequestParam(value = "currentPageNo",defaultValue = "1") Integer currentPageNo,
-                                                                   @RequestParam(value = "pageSize",defaultValue = "1")  Integer pageSize){
+    public ApiResult<List<SimulatedExercise>> getSimulatedExercise(@RequestParam(value = "page",defaultValue = "1") Integer currentPageNo,
+                                                                   @RequestParam(value = "limit",defaultValue = "1")  Integer pageSize){
         try {
             return   simulatedExerciseService.getSimulatedExercise(currentPageNo, pageSize);
         } catch (Exception e) {

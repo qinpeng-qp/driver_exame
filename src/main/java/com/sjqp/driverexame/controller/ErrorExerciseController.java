@@ -34,8 +34,8 @@ public class ErrorExerciseController {
 
     @RequestMapping(value = "getError")
     @ResponseBody
-    public ApiResult<List<ErrorExercise>> getErrorExercise(@RequestParam(value = "currentPageNo",defaultValue = "1") Integer currentPageNo,
-                                                          @RequestParam(value = "pageSize",defaultValue = "1")  Integer pageSize){
+    public ApiResult<List<ErrorExercise>> getErrorExercise(@RequestParam(value = "page",defaultValue = "1") Integer currentPageNo,
+                                                          @RequestParam(value = "limit",defaultValue = "1")  Integer pageSize){
         try {
             return   errorExerciseService.getErrorExercise(currentPageNo, pageSize);
         } catch (Exception e) {

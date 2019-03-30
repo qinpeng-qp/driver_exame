@@ -14,28 +14,13 @@ public class Const {
     public static String  SECURITY_CODE_URL = "/api/login/securitycode";
 
     public static String LOGOUT_URL = "/api/system/logout";
-    /**
-     * 前端查询企业Id和Name都调用了此接口，特殊处理，如果包含此url就放行
-     */
-    public static String SPECIAL_URL = "/api/enterpriseModule/enterprise/enterpriseIdAndNames";
+
 
     public static int NO_LOGIN_STATUS = 401;
 
     public static int NO_AUTHORIZATION_STATUS = 403;
 
-    public static String ENTERPRISE_STTING = "/enterpriseModule/";
 
-    public static String ROUTER_SETTING = "/routerModule/";
-
-    public static String REPORT = "/reportModule/";
-
-    public static String CDR = "/cdrModule/";
-
-    public static String CURL = "/curlModule/";
-
-    public static String SYSTEM_SETTING = "/systemModule/";
-
-    public static String IVR = "/ivrModule/";
 
     /** 记录登录用户 */
     public static final String LOGINED_KEY = "logined";

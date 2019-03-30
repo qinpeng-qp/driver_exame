@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import redis.clients.jedis.Jedis;
 
 import javax.imageio.ImageIO;
 import javax.servlet.*;
@@ -54,16 +53,6 @@ public class LoginFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Access-Control-Allow-Origin", "http://local.sipcloud.cn:4003");
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET,PUT, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Max-Age", "0");
-        response.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache,Host, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control,Cookie, Expires, Content-Type, X-E4M-With,userId,token");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("XDomainRequestAllowed", "1");
-        response.setHeader("Connection","keep-alive");
-        if (request.getMethod().equals("OPTIONS")) {
-            return;
-        }
         String currPath = request.getRequestURI();
         UserInfo userInfo = (UserInfo) request.getSession().getAttribute(Const.LOGINED_KEY);
 
@@ -82,8 +71,8 @@ public class LoginFilter implements Filter {
                 return;
             } else {
                 ApiResult result = new ApiResult();
-                result.setDescription("未登录");
-                result.setStatus(Const.NO_LOGIN_STATUS);
+                result.setMsg("未登录");
+                result.setCode(Const.NO_LOGIN_STATUS);
                 write(response, result);
                 return;
             }
@@ -95,27 +84,21 @@ public class LoginFilter implements Filter {
             }
             if (currPath.contains(Const.LOGIN_URL) || currPath.contains(Const.ADMIN_LOGIN_URL) || currPath.contains(Const.SECURITY_CODE_URL)) {
                 ApiResult result = new ApiResult();
-                result.setStatus(ApiResult.FAIL_RESULT);
-                result.setDescription("您已经登录");
+                result.setCode(ApiResult.FAIL_RESULT);
+                result.setMsg("您已经登录");
                 write(response, result);
                 return;
             }
 
-            /**
-             * 前端查询企业Id和Name都调用了此接口，特殊处理，如果包含此url就放行
-             */
-            if (currPath.contains(Const.SPECIAL_URL)){
-                filterChain.doFilter(servletRequest, servletResponse);
-                return;
-            }
+           
             boolean volidate = volidate(request, userInfo);
             if (volidate) {
 
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {
                 ApiResult result = new ApiResult();
-                result.setDescription("未授权");
-                result.setStatus(Const.NO_AUTHORIZATION_STATUS);
+                result.setMsg("未授权");
+                result.setCode(Const.NO_AUTHORIZATION_STATUS);
                 write(response, result);
                 return;
             }
@@ -147,15 +130,15 @@ public class LoginFilter implements Filter {
                 String securityCode = jsonObject.getString("securityCode");
                 if (StringUtils.isEmpty(securityCode)) {
                     ApiResult result = new ApiResult();
-                    result.setDescription("验证码不能为空");
-                    result.setStatus(ApiResult.FAIL_RESULT);
+                    result.setMsg("验证码不能为空");
+                    result.setCode(ApiResult.FAIL_RESULT);
                     write(response, result);
                     return;
                 }
                 if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
                     ApiResult result = new ApiResult();
-                    result.setDescription("用户或密码不能为空");
-                    result.setStatus(ApiResult.FAIL_RESULT);
+                    result.setMsg("用户或密码不能为空");
+                    result.setCode(ApiResult.FAIL_RESULT);
                     write(response, result);
                     return;
                 }
@@ -167,7 +150,7 @@ public class LoginFilter implements Filter {
                 //登录校验
                 ApiResult<UserInfo> apiResult = executeValidateLogin(userName, pwdMd5, securityCode, securityCodeInsession);
                 if (apiResult != null) {
-                    if (apiResult.getStatus() == ApiResult.FAIL_RESULT) {
+                    if (apiResult.getCode() == ApiResult.FAIL_RESULT) {
                         //登录失败
                         write(response, apiResult);
                     } else {
@@ -185,8 +168,8 @@ public class LoginFilter implements Filter {
         } catch (Exception e) {
             logger.error("login exception e{}", e);
             ApiResult result = new ApiResult();
-            result.setDescription("系统异常");
-            result.setStatus(ApiResult.FAIL_RESULT);
+            result.setMsg("系统异常");
+            result.setCode(ApiResult.FAIL_RESULT);
             write(response, result);
         }
     }
@@ -203,12 +186,12 @@ public class LoginFilter implements Filter {
             request.getSession().removeAttribute(Const.LOGINED_KEY);
             request.getSession().removeAttribute(SecurityCodeUtil.SECURITY_CODE);
             result = new ApiResult();
-            result.setStatus(ApiResult.SUCCESS_RESULT);
-            result.setDescription("登出成功");
+            result.setCode(ApiResult.SUCCESS_RESULT);
+            result.setMsg("登出成功");
         } catch (Exception e) {
             logger.error("logout exception e{}", e);
-            result.setDescription("系统异常");
-            result.setStatus(ApiResult.FAIL_RESULT);
+            result.setMsg("系统异常");
+            result.setCode(ApiResult.FAIL_RESULT);
         }
         write(response, result);
 
@@ -316,8 +299,8 @@ public class LoginFilter implements Filter {
             //判断验证码是否正确
             if (StringUtils.isNotBlank(securityCode)) {
                 if (!securityCode.toLowerCase().equals(securityCodeInSession)) {
-                    apiResult.setStatus(ApiResult.FAIL_RESULT);
-                    apiResult.setDescription("验证码输入错误");
+                    apiResult.setCode(ApiResult.FAIL_RESULT);
+                    apiResult.setMsg("验证码输入错误");
                     return apiResult;
                 }
             }
@@ -326,15 +309,15 @@ public class LoginFilter implements Filter {
             if (!CollectionUtils.isEmpty(userInfoList)) {
                 for (UserInfo userInfo : userInfoList) {
                     if (userName.equals(userInfo.getUsername()) && pwdMd5.equals(userInfo.getPassword())) {
-                        apiResult.setStatus(ApiResult.SUCCESS_RESULT);
-                        apiResult.setDescription("登录成功");
+                        apiResult.setCode(ApiResult.SUCCESS_RESULT);
+                        apiResult.setMsg("登录成功");
                         apiResult.setData(userInfo);
                         return apiResult;
                     }
                 }
             }
-            apiResult.setDescription("用户名或密码错误");
-            apiResult.setStatus(ApiResult.FAIL_RESULT);
+            apiResult.setMsg("用户名或密码错误");
+            apiResult.setCode(ApiResult.FAIL_RESULT);
         } catch (Exception e) {
             logger.error("用户名或密码校验异常：e{}",e);
         }

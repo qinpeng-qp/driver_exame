@@ -9,4 +9,13 @@ import java.util.List;
 public interface SimulatedExerciseService {
 
     ApiResult<List<SimulatedExercise>> getSimulatedExercise(Integer currentPageNo, Integer pageSize);
+
+    ApiResult  saveSimulatedExercise(List<SimulatedExercise> simulatedExercises);
+
+    /**
+     * 删除
+     * @param simulatedExercises
+     * @return
+     */
+    ApiResult  deleteSimulatedExercise(List<SimulatedExercise> simulatedExercises);
 }

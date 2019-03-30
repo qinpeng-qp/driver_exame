@@ -48,7 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfo.setId(userId);
                 UserInfo object = userInfoMapper.selectByPrimaryKey(userInfo);
                 if (Objects.isNull(object)){
-                    apiResult.setDescription("用户不存在,或者输入的userId有误");
+                    apiResult.setMsg("用户不存在,或者输入的userId有误");
                     return apiResult;
                 }
             }
@@ -60,7 +60,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 if (!CollectionUtils.isEmpty(userInfoList)) {
                     apiResult = updatePassword(newPwd, userId, apiResult);
                 } else {
-                    apiResult.setDescription("旧密码错误");
+                    apiResult.setMsg("旧密码错误");
                 }
             } else {
                 //管理员可以直接修改用户密码，不需要输入旧密码
@@ -80,9 +80,9 @@ public class UserInfoServiceImpl implements UserInfoService {
             PageHelper.startPage(currentNo,pageSize);
             List<UserInfo> userInfoList = userInfoMapper.selectAll();
             PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfoList);
-            apiResult.setStatus(ApiResult.SUCCESS_RESULT);
+            apiResult.setCode(ApiResult.SUCCESS_RESULT);
             apiResult.setData(pageInfo.getList());
-            apiResult.setTotalCount((int) pageInfo.getTotal());
+            apiResult.setTotal((int) pageInfo.getTotal());
             apiResult.setPageSize(pageInfo.getPageSize());
             apiResult.setCurrentPageNo(pageInfo.getPageNum());
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             conditionCriteria.andEqualTo("username", username);
             List<UserInfo> userInfoList = userInfoMapper.selectByCondition(condition);
             if (!CollectionUtils.isEmpty(userInfoList)) {
-                apiResult.setStatus(ApiResult.SUCCESS_RESULT);
+                apiResult.setCode(ApiResult.SUCCESS_RESULT);
                 UserInfo userInfo = userInfoList.get(0);
                 Integer roleId = userInfo.getRoleId();
                 Role role = roleMapper.selectByPrimaryKey(roleId);
@@ -118,7 +118,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 }
                 apiResult.setData(jsonObject);
             }else {
-                apiResult.setDescription("没有查到用户信息！");
+                apiResult.setMsg("没有查到用户信息！");
             }
         } catch (Exception e) {
             apiResult = new ApiResult<>(ApiResult.FAIL_RESULT, "系统异常");
@@ -142,17 +142,17 @@ public class UserInfoServiceImpl implements UserInfoService {
                 }
                 int row = userInfoMapper.insert(userInfo);
                 if (row > 0){
-                    apiResult.setStatus(ApiResult.SUCCESS_RESULT);
-                    apiResult.setDescription("创建用户成功");
+                    apiResult.setCode(ApiResult.SUCCESS_RESULT);
+                    apiResult.setMsg("创建用户成功");
                 }else {
-                    apiResult.setStatus(ApiResult.FAIL_RESULT);
-                    apiResult.setDescription("创建用户失败");
+                    apiResult.setCode(ApiResult.FAIL_RESULT);
+                    apiResult.setMsg("创建用户失败");
                 }
             }
         } catch (Exception e) {
             logger.error("UserInfoServiceImpl createAccount e{}",e);
-            apiResult.setStatus(ApiResult.FAIL_RESULT);
-            apiResult.setDescription("系统异常");
+            apiResult.setCode(ApiResult.FAIL_RESULT);
+            apiResult.setMsg("系统异常");
         }
         return apiResult;
     }
@@ -167,17 +167,17 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfo.setId(userId);
                 int row = userInfoMapper.deleteByPrimaryKey(userInfo);
                 if (row > 0){
-                    apiResult.setStatus(ApiResult.SUCCESS_RESULT);
-                    apiResult.setDescription("删除成功");
+                    apiResult.setCode(ApiResult.SUCCESS_RESULT);
+                    apiResult.setMsg("删除成功");
                 }else {
-                    apiResult.setStatus(ApiResult.FAIL_RESULT);
-                    apiResult.setDescription("删除用户失败");
+                    apiResult.setCode(ApiResult.FAIL_RESULT);
+                    apiResult.setMsg("删除用户失败");
                     logger.error("删除用户失败，用户id为{}",userInfo.getId());
                 }
             }
         } catch (Exception e) {
-            apiResult.setStatus(ApiResult.FAIL_RESULT);
-            apiResult.setDescription("系统异常");
+            apiResult.setCode(ApiResult.FAIL_RESULT);
+            apiResult.setMsg("系统异常");
             logger.error("UserInfoServiceImpl deletAccount e{}",e);
         }
         return apiResult;
@@ -199,17 +199,17 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setPassword(MD5Encoder.encode(newPwd));
             int row = userInfoMapper.updateByPrimaryKeySelective(userInfo);
             if (row > 0) {
-                apiResult.setStatus(ApiResult.SUCCESS_RESULT);
-                apiResult.setDescription("修改密码成功");
+                apiResult.setCode(ApiResult.SUCCESS_RESULT);
+                apiResult.setMsg("修改密码成功");
                 return apiResult;
             } else {
-                apiResult.setStatus(ApiResult.FAIL_RESULT);
-                apiResult.setDescription("修改密码失败");
+                apiResult.setCode(ApiResult.FAIL_RESULT);
+                apiResult.setMsg("修改密码失败");
             }
         } catch (Exception e) {
             logger.error("UserInfoServiceImpl updatePassword exception{}", e);
-            apiResult.setStatus(ApiResult.FAIL_RESULT);
-            apiResult.setDescription("系统异常");
+            apiResult.setCode(ApiResult.FAIL_RESULT);
+            apiResult.setMsg("系统异常");
         }
         return apiResult;
     }

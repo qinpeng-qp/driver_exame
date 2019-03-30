@@ -15,9 +15,9 @@ public class ApiResult<T> implements Serializable {
 
     public static final int FAIL_RESULT = -1;
 
-    private int status;
+    private int code;
 
-    private String description;
+    private String msg;
 
     private T data;
 
@@ -25,30 +25,30 @@ public class ApiResult<T> implements Serializable {
 
     private int pageSize;
 
-    private int totalCount;
+    private int total;
 
 
     public ApiResult() {
 
     }
 
-    public ApiResult(int status) {
-        this.status = status;
-        if (status == SUCCESS_RESULT) {
-            this.description = SUCCESS_DESCRIPTION;
+    public ApiResult(int code) {
+        this.code = code;
+        if (code == SUCCESS_RESULT) {
+            this.msg = SUCCESS_DESCRIPTION;
         }
     }
 
 
     public ApiResult(T data) {
-        this.status = SUCCESS_RESULT;
-        this.description = SUCCESS_DESCRIPTION;
+        this.code = SUCCESS_RESULT;
+        this.msg = SUCCESS_DESCRIPTION;
         this.data = data;
     }
 
-    public ApiResult(int status, String description) {
-        this.status = status;
-        this.description = description;
+    public ApiResult(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
     }
 
     /**
@@ -78,19 +78,19 @@ public class ApiResult<T> implements Serializable {
     public static <T> ApiResult<T> newInstance(T data, int status, String description){
         ApiResult apiResult = new ApiResult();
         apiResult.setData(data)
-                 .setStatus(status)
-                 .setDescription(description);
+                 .setCode(status)
+                 .setMsg(description);
         return apiResult;
     }
 
-    public int getStatus() {
-        return status;
+    public int getCode() {
+        return code;
     }
 
-    public ApiResult setStatus(int status) {
-        this.status = status;
-        if (status == SUCCESS_RESULT) {
-            this.description = SUCCESS_DESCRIPTION;
+    public ApiResult setCode(int code) {
+        this.code = code;
+        if (code == SUCCESS_RESULT) {
+            this.msg = SUCCESS_DESCRIPTION;
         }
         return this;
     }
@@ -113,21 +113,21 @@ public class ApiResult<T> implements Serializable {
         return this;
     }
 
-    public int getTotalCount() {
-        return totalCount;
+    public int getTotal() {
+        return total;
     }
 
-    public ApiResult setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public ApiResult setTotal(int total) {
+        this.total = total;
         return this;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMsg() {
+        return msg;
     }
 
-    public ApiResult setDescription(String description) {
-        this.description = description;
+    public ApiResult setMsg(String msg) {
+        this.msg = msg;
         return this;
     }
 
@@ -143,12 +143,12 @@ public class ApiResult<T> implements Serializable {
     @Override
     public String toString() {
         return "ApiResult{" +
-                "status=" + status +
-                ", description='" + description + '\'' +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
                 ", data=" + data +
                 ", currentPageNo=" + currentPageNo +
                 ", pageSize=" + pageSize +
-                ", totalCount=" + totalCount +
+                ", total=" + total +
                 '}';
     }
 }
