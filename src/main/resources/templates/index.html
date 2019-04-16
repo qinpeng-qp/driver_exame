@@ -35,11 +35,16 @@
                 }
             })
         }
+       var loginkey = /*[[${session.logined}]]*/;
+       if (loginkey === null){
+           window.location = (basePath +"/login");
+       }
+
     </script>
 </head>
 <body>
 <!-- 顶部开始 -->
-<div th:replace="nav :: nav"></div>
+<div th:replace="nav.html :: nav"></div>
 <!--轮播图开始-->
 <div class="layui-carousel" id="test1" lay-filter="test1">
     <div carousel-item>
@@ -52,7 +57,20 @@
 </div>
 <!--轮播图结束-->
 <!--中部开始-->
-<div class="layui-col-sm3 layui-col-lg-offset2">
+<div class="layui-col-sm12" style="margin-left: 80px">
+<div class="layui-col-sm3">
+    <div class="layui-card card-body-top">
+        <div class="layui-card-header card-header">答题记录</div>
+        <div class="layui-card-body">
+            <div class="layui-anim layui-anim-scaleSpring card-a">
+                <a href="/record-score-list">
+                    <i class="layui-icon icon-stytle" style="color: #2F4056;">&#xe63c;</i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-col-sm3 ">
     <div class="layui-card card-body-top">
         <div class="layui-card-header card-header">模拟练习</div>
         <div class="layui-card-body">
@@ -87,6 +105,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 <hr>
 <!--中部结束-->

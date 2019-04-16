@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import tk.mybatis.mapper.entity.Condition;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,13 +36,15 @@ public class SimulatedExerciseServiceImpl implements SimulatedExerciseService {
             if(Objects.nonNull(currentPageNo) && Objects.nonNull(pageSize)) {
                 /**插件分页 */
                 PageHelper.startPage(currentPageNo, pageSize);
-                List<SimulatedExercise> simulatedExerciseList = simulatedExerciseMapper.selectAll();
+                Condition condition = new Condition(SimulatedExercise.class);
+                condition.orderBy("id");
+                List<SimulatedExercise> simulatedExerciseList = simulatedExerciseMapper.selectByCondition(condition);
                 PageInfo<SimulatedExercise> pageInfo = new PageInfo<>(simulatedExerciseList);
                 ApiResult<List<SimulatedExercise>> apiResult = new ApiResult<List<SimulatedExercise>>(ApiResult.SUCCESS_RESULT);
                 apiResult.setData(pageInfo.getList());
-                apiResult.setCurrentPageNo(pageInfo.getPageNum());
-                apiResult.setTotal((int) pageInfo.getTotal());
-                apiResult.setPageSize(pageInfo.getPageSize());
+                apiResult.setPage(pageInfo.getPageNum());
+                apiResult.setCount((int) pageInfo.getTotal());
+                apiResult.setLimit(pageInfo.getPageSize());
                 return apiResult;
             }
             return new ApiResult(ApiResult.FAIL_RESULT);
@@ -87,6 +90,21 @@ public class SimulatedExerciseServiceImpl implements SimulatedExerciseService {
         } catch (Exception e) {
             logger.error("deleteSimulatedExercise e{}",e);
             throw e;
+        }
+        return apiResult;
+    }
+
+    @Override
+    public ApiResult updateSimulatedExercise(SimulatedExercise simulatedExercise) {
+        ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
+        try {
+            int row = simulatedExerciseMapper.updateByPrimaryKeySelective(simulatedExercise);
+            if (row > 0) {
+                apiResult.setData(ApiResult.SUCCESS_RESULT);
+                apiResult.setMsg("修改成功");
+            }
+        } catch (Exception e) {
+            logger.error("updateErrorExercise e{}", e);
         }
         return apiResult;
     }

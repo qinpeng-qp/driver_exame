@@ -90,7 +90,7 @@ public class LoginFilter implements Filter {
                 return;
             }
 
-           
+
             boolean volidate = volidate(request, userInfo);
             if (volidate) {
 
@@ -144,7 +144,6 @@ public class LoginFilter implements Filter {
                 }
                 String pwdMd5 = MD5Encoder.encode(password.trim());
                 String securityCodeInsession = (String) session.getAttribute(SecurityCodeUtil.SECURITY_CODE);
-                logger.info("sessionId: "+request.getSession().getId()+"输入的验证码："+securityCode);
                 logger.info("username: "+userName+"password："+password);
 
                 //登录校验

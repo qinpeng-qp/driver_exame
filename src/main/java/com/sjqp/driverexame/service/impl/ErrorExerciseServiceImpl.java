@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import tk.mybatis.mapper.entity.Condition;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,13 +37,16 @@ public class ErrorExerciseServiceImpl implements ErrorExerciseService {
             if(Objects.nonNull(currentPageNo) && Objects.nonNull(pageSize)) {
                 /**插件分页 */
                 PageHelper.startPage(currentPageNo, pageSize);
-                List<ErrorExercise> errorExercises = errorExerciseMapper.selectAll();
+                Condition condition = new Condition(ErrorExercise.class);
+                condition.orderBy("id");
+                List<ErrorExercise> errorExercises = errorExerciseMapper.selectByCondition(condition);
+
                 PageInfo<ErrorExercise> pageInfo = new PageInfo<>(errorExercises);
                 ApiResult<List<ErrorExercise>> apiResult = new ApiResult<>(ApiResult.SUCCESS_RESULT);
                 apiResult.setData(pageInfo.getList());
-                apiResult.setCurrentPageNo(pageInfo.getPageNum());
-                apiResult.setTotal((int) pageInfo.getTotal());
-                apiResult.setPageSize(pageInfo.getPageSize());
+                apiResult.setPage(pageInfo.getPageNum());
+                apiResult.setCount((int) pageInfo.getTotal());
+                apiResult.setLimit(pageInfo.getPageSize());
                 return apiResult;
             }
             return new ApiResult(ApiResult.FAIL_RESULT);
@@ -86,6 +91,21 @@ public class ErrorExerciseServiceImpl implements ErrorExerciseService {
         } catch (Exception e) {
             logger.error("deleteErrorExercise e{}",e);
             throw e;
+        }
+        return apiResult;
+    }
+
+    @Override
+    public ApiResult updateErrorExercise(ErrorExercise errorExercise) {
+        ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
+        try {
+            int row = errorExerciseMapper.updateByPrimaryKey(errorExercise);
+            if (row > 0) {
+                apiResult.setData(ApiResult.SUCCESS_RESULT);
+                apiResult.setMsg("修改成功");
+            }
+        } catch (Exception e) {
+            logger.error("updateErrorExercise e{}", e);
         }
         return apiResult;
     }

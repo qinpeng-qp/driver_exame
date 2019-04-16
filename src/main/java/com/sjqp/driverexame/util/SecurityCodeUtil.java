@@ -12,10 +12,10 @@ public class SecurityCodeUtil {
 	public static final String SECURITY_CODE = "SECURITY_CODE";
 	
 	// 验证码图片的宽度。  
-	private static int width = 100;
+	private static int width = 132;
 
 	// 验证码图片的高度。  
-	private static int height = 40;
+	private static int height = 48;
 	
 	private static int codeCount = 4;
 	

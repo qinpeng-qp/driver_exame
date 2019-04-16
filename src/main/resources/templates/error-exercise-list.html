@@ -22,22 +22,15 @@
 </head>
 
 <body class="layui-anim layui-anim-up">
-<div class="x-nav">
-      <span class="layui-breadcrumb">
-        <a href="">首页</a>
-        <a href="">演示</a>
-        <a>
-          <cite>导航元素</cite></a>
-      </span>
-    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
-       href="javascript:x_admin_show('批量上传','./upload-question?questionType=1',500,300)" title="批量上传">
-        <i class="layui-icon" style="line-height:30px">批量上传</i></a>
-
-    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;margin-right:5px;float:right"
-       href="javascript:location.replace(location.href);" title="刷新">
-        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+<a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+   href="javascript:x_admin_show('批量上传','./upload-question?questionType=1',500,300)" title="批量上传">
+    <i class="layui-icon" style="line-height:30px">批量上传</i></a>
+<!--操作区域-->
+<div th:replace="title.html :: title"></div>
+<div class="layui-btn-group demoTable">
+    <button class="layui-btn layui-btn-danger" data-type="deleteAll">批量删除</button>
 </div>
-<table class="layui-hide" id="test" lay-filter="demo"></table>
+<table class="layui-hide" id="table" lay-filter="table"></table>
 
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
@@ -45,38 +38,68 @@
 </script>
 
 <script th:inline="javascript">
-    layui.use('table', function () {
+
+    layui.use(['table','util'], function () {
         var table = layui.table;
+        var util = layui.util;
         //第一个实例
         table.render({
-            elem: '#test'
+            elem: '#table'
             ,height:'full-100'
             , url: '/error/getError' //数据接口
-            , page: true
+            ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                //,curr: 5 //设定初始在第 5 页
+                ,groups: 10 //只显示 1 个连续页码
+                ,first: false //不显示首页
+                ,last: false //不显示尾页
+
+            }
             , cols: [
                 [   {type:'checkbox', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
-                    , {field: 'comment', title: '题目', width: 120}
-                    , {field: 'choice', title: '选项'}
-                    , {field: 'answer', title: '答案'}
-                    , {field: 'createTime', title: 'createTime'}
+                    , {field: 'comment', title: '题目', edit: 'text',width: 120}
+                    , {field: 'choice', title: '选项',edit: 'text'}
+                    , {field: 'answer', title: '答案',edit: 'text'}
+                    , {field: 'createTime', title: 'createTime',templet:function(d){return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");}}
                     ,{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
                 ]
             ]
         });
 
         //监听表格复选框选择
-        table.on('checkbox(demo)', function(obj){
+        table.on('checkbox(table)', function(obj){
             console.log(obj.data)
         });
         //监听工具条
-        table.on('tool(demo)', function(obj){
+        table.on('tool(table)', function(obj){
             var data = obj.data;
             console.log(obj.data)
             if(obj.event === 'detail'){
                 layer.msg('ID：'+ data.id + ' 的查看操作');
-            } else if(obj.event === 'add'){
-                layer.msg('add：'+ data.id + ' 的查看操作');
+            } else if(obj.event === 'edit'){
+                layer.confirm('真的要修改么', function(index){
+                    layer.close(index);
+                    $.ajax({
+                        url:'/error/updateError/'
+                        ,type:"put"
+                        ,dataType:"json"
+                        ,data:JSON.stringify(data)
+                        ,contentType:"application/json"
+                        ,success:function (data) {
+                            layer.msg(JSON.stringify(data));
+                            location.replace(location.href);
+                        },
+                        error:function (data) {
+                            layer.msg(JSON.stringify(data));
+                            location.replace(location.href);
+
+                        }
+                    });
+                    layer.close(index);
+
+                });
+
             }else if(obj.event === 'del'){
                 layer.confirm('真的删除行么', function(index){
                     obj.del();
@@ -92,24 +115,40 @@
                     });
                     layer.close(index);
                 });
-            } else if(obj.event === 'edit'){
-                x_admin_show("修改密码",'./changePwd');
             }
         });
 
         var $ = layui.$, active = {
-            getCheckData: function(){ //获取选中数据
-                var checkStatus = table.checkStatus('idTest')
+            deleteAll: function(){ //获取选中数据
+                var checkStatus = table.checkStatus('table')
                     ,data = checkStatus.data;
                 layer.alert(JSON.stringify(data));
+                layer.confirm('真的删除么', function(index){
+                    layer.close(index);
+                    $.ajax({
+                        url:'/error/deleteError/'
+                        ,type:"delete"
+                        ,dataType:"json"
+                        ,data:JSON.stringify(data)
+                        ,contentType:"application/json"
+                        ,success:function (res) {
+                            layer.msg(JSON.stringify(res));
+                        },
+                        error:function (res) {
+                            layer.msg(JSON.stringify(res));
+                        }
+                    });
+                    layer.close(index);
+                    location.replace(location.href);
+                });
             }
             ,getCheckLength: function(){ //获取选中数目
-                var checkStatus = table.checkStatus('idTest')
+                var checkStatus = table.checkStatus('table')
                     ,data = checkStatus.data;
                 layer.msg('选中了：'+ data.length + ' 个');
             }
             ,isAll: function(){ //验证是否全选
-                var checkStatus = table.checkStatus('idTest');
+                var checkStatus = table.checkStatus('table');
                 layer.msg(checkStatus.isAll ? '全选': '未全选')
             }
 

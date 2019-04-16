@@ -39,16 +39,27 @@ public class RealExerciseController {
             return   realExerciseService.getRealExercise(currentPageNo, pageSize);
         } catch (Exception e) {
             logger.error("RealExerciseController error {}",e);
+            return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
         }
-        //"id":3,"questionId":null,"comment":"第三题","createTime":"2019-02-12T07:34:50.849+0000","answer":"C","choice":"{\"A\": \"酒驾\", \"B\": \"超速\", \"C\": \"违章\", \"D\": \"逃逸\"}"}
-        return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
+
     }
 
     @DeleteMapping(value = "deleteReal",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public ApiResult<List<RealExercise>> deleteRealExercise(@RequestBody List<RealExercise> realExerciseList){
+    public ApiResult deleteRealExercise(@RequestBody List<RealExercise> realExerciseList){
         try {
             return   realExerciseService.deleteRealExercise(realExerciseList);
+        } catch (Exception e) {
+            logger.error("RealExerciseController error {}",e);
+        }
+        return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
+    }
+
+    @PutMapping(value = "updateReal",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiResult updateRealExercise(@RequestBody RealExercise realExercise){
+        try {
+            return realExerciseService.updateRealExercise(realExercise);
         } catch (Exception e) {
             logger.error("RealExerciseController error {}",e);
         }

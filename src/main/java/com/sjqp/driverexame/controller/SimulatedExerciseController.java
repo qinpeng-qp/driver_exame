@@ -1,5 +1,7 @@
 package com.sjqp.driverexame.controller;
 
+import com.sjqp.driverexame.entity.ErrorExercise;
+import com.sjqp.driverexame.entity.RealExercise;
 import com.sjqp.driverexame.entity.SimulatedExercise;
 import com.sjqp.driverexame.service.SimulatedExerciseService;
 import com.sjqp.driverexame.util.ApiResult;
@@ -45,5 +47,26 @@ public class SimulatedExerciseController {
         return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
     }
 
+    @DeleteMapping(value = "deleteSimulated",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiResult deleteRealExercise(@RequestBody List<SimulatedExercise> simulatedExerciseList){
+        try {
+            return   simulatedExerciseService.deleteSimulatedExercise(simulatedExerciseList);
+        } catch (Exception e) {
+            logger.error("SimulatedExerciseController error {}",e);
+        }
+        return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
+    }
+
+    @PutMapping(value = "updateSimulated",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiResult updateSimulatedExercise(@RequestBody SimulatedExercise simulatedExercise){
+        try {
+            return simulatedExerciseService.updateSimulatedExercise(simulatedExercise);
+        } catch (Exception e) {
+            logger.error("ErrorExerciseController error {}",e);
+        }
+        return new ApiResult<>(ApiResult.FAIL_RESULT,"系统异常");
+    }
 
 }

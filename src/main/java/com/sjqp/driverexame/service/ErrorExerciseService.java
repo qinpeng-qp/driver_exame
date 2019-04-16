@@ -1,6 +1,7 @@
 package com.sjqp.driverexame.service;
 
 import com.sjqp.driverexame.entity.ErrorExercise;
+import com.sjqp.driverexame.entity.RealExercise;
 import com.sjqp.driverexame.util.ApiResult;
 
 import java.util.List;
@@ -17,6 +18,13 @@ public interface ErrorExerciseService {
      * @return
      */
     ApiResult  deleteErrorExercise(List<ErrorExercise> errorExercises);
+
+    /**
+     * 更新
+     * @param errorExercise
+     * @return
+     */
+    ApiResult  updateErrorExercise(ErrorExercise errorExercise);
 
 
 }

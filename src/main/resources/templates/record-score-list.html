@@ -2,8 +2,9 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <link rel="stylesheet" type="text/css" href="src/main/resources/static/layui/css/layui.css"/>
     <meta charset="UTF-8">
-    <title>习题列表</title>
+    <title>错题练习列表</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -19,25 +20,48 @@
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script th:inline="javascript">
+        var basePath = /*[[${#httpServletRequest.getContextPath()}]]*/;
+
+        function loginOut() {
+            $.ajax({
+                url: basePath + "/api/system/logout",
+                type: "get",
+                success: function (data) {
+                    window.location = (basePath + "/login");
+                },
+                error: function (data) {
+
+                    alert("登出失败")
+                }
+            });
+        }
+
+    </script>
 </head>
 
 <body class="layui-anim layui-anim-up">
-<a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
-   href="javascript:x_admin_show('批量上传','./upload-question?questionType=0',500,300)" title="批量上传">
-    <i class="layui-icon" style="line-height:30px">批量上传</i></a>
-<div th:replace="title.html :: title"></div>
 
-<div class="layui-btn-group demoTable">
-    <button class="layui-btn layui-btn-danger" data-type="deleteAll">批量删除</button>
+<!--操作区域-->
+<div th:replace="nav :: nav"></div>
+<div class="layui-container">
+    <div class="layui-row">
+        <!--<div class="layui-btn-group demoTable">-->
+            <!--<button class="layui-btn layui-btn-danger" data-type="deleteAll">批量删除</button>-->
+        <!--</div>-->
+        <table class="layui-hide" id="table" lay-filter="table"></table>
+    </div>
 </div>
-<table class="layui-hide" id="table" lay-filter="table"></table>
 
-<script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
+
 
 <script th:inline="javascript">
+    //获取session中的对象
+    var loginkey = /*[[${session.logined}]]*/;
+    var username;
+    if (loginkey != null){
+       username = loginkey.username;
+    }
     layui.use(['table','util'], function () {
         var table = layui.table;
         var util = layui.util;
@@ -45,7 +69,7 @@
         table.render({
             elem: '#table'
             ,height:'full-100'
-            , url: '/real/getReal' //数据接口
+            , url: '/record/getRecordScore?username='+username //根据用户名查找答题记录
             ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
                 //,curr: 5 //设定初始在第 5 页
@@ -55,55 +79,31 @@
 
             }
             , cols: [
-                [   {type:'checkbox', fixed: 'left'}
-                    ,{field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
-                    , {field: 'comment', title: '题目', edit: 'text',width: 120}
-                    , {field: 'choice', title: '选项',edit: 'text'}
-                    , {field: 'answer', title: '答案',edit: 'text'}
-                    , {field: 'createTime', title: 'createTime',templet:function(d){return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");}}
-                    ,{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
+                [
+                    {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                    , {field: 'username', title: '用户名',width: 120}
+                    , {field: 'totalCount', title: '题目总数'}
+                    , {field: 'score', title: '答对的题目数'}
+                    , {field: 'createTime',title: '答题时间', templet:function(d){return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");}}
                 ]
             ]
         });
 
         //监听表格复选框选择
         table.on('checkbox(table)', function(obj){
-
+            console.log(obj.data)
         });
         //监听工具条
         table.on('tool(table)', function(obj){
             var data = obj.data;
-
-            var jsonArray=[];
-            //json数组
-            jsonArray.push(data);
+            console.log(obj.data)
             if(obj.event === 'detail'){
                 layer.msg('ID：'+ data.id + ' 的查看操作');
-            } else if(obj.event === 'add'){
-                layer.msg('add：'+ data.id + ' 的查看操作');
-            }else if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
-                    obj.del();
-                    $.ajax({
-                        url:'/real/deleteReal/'
-                        ,type:"delete"
-                        ,dataType:"json"
-                        ,data:JSON.stringify(jsonArray)
-                        ,contentType:"application/json"
-                        ,success:function (res) {
-                            layer.msg(JSON.stringify(res));
-                        },
-                        error:function (res) {
-                            layer.msg(JSON.stringify(res));
-                        }
-                    });
-                    layer.close(index);
-                });
             } else if(obj.event === 'edit'){
                 layer.confirm('真的要修改么', function(index){
                     layer.close(index);
                     $.ajax({
-                        url:'/real/updateReal/'
+                        url:'/error/updateError/'
                         ,type:"put"
                         ,dataType:"json"
                         ,data:JSON.stringify(data)
@@ -122,6 +122,21 @@
 
                 });
 
+            }else if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    $.ajax({
+                        url:'/api/userModule/userInfo/'+data.id
+                        ,type:"delete"
+                        ,success:function (res) {
+                            layer.msg(JSON.stringify(res));
+                        },
+                        error:function (res) {
+                            layer.msg(JSON.stringify(res));
+                        }
+                    });
+                    layer.close(index);
+                });
             }
         });
 
@@ -133,7 +148,7 @@
                 layer.confirm('真的删除么', function(index){
                     layer.close(index);
                     $.ajax({
-                        url:'/real/deleteReal/'
+                        url:'/error/deleteError/'
                         ,type:"delete"
                         ,dataType:"json"
                         ,data:JSON.stringify(data)
@@ -165,17 +180,7 @@
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
-
-        //监听单元格编辑
-        table.on('edit(table)', function(obj){
-            var value = obj.value //得到修改后的值
-                ,data = obj.data //得到所在行所有键值
-                ,field = obj.field; //得到字段
-            layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
-
-        });
     });
-
 
 </script>
 </body>

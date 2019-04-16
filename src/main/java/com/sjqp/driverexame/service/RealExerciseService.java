@@ -21,5 +21,12 @@ public interface RealExerciseService {
      */
     ApiResult  deleteRealExercise(List<RealExercise> realExerciseList);
 
+    /**
+     * 更新
+     * @param realExerciseList
+     * @return
+     */
+    ApiResult  updateRealExercise(RealExercise realExerciseList);
+
 
 }

@@ -1,6 +1,7 @@
 package com.sjqp.driverexame.service;
 
 import com.github.pagehelper.PageInfo;
+import com.sjqp.driverexame.entity.ErrorExercise;
 import com.sjqp.driverexame.entity.SimulatedExercise;
 import com.sjqp.driverexame.util.ApiResult;
 
@@ -18,4 +19,11 @@ public interface SimulatedExerciseService {
      * @return
      */
     ApiResult  deleteSimulatedExercise(List<SimulatedExercise> simulatedExercises);
+
+    /**
+     * 更新
+     * @param errorExercise
+     * @return
+     */
+    ApiResult  updateSimulatedExercise(SimulatedExercise simulatedExercise);
 }

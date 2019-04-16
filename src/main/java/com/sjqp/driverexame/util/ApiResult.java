@@ -21,11 +21,11 @@ public class ApiResult<T> implements Serializable {
 
     private T data;
 
-    private int currentPageNo;
+    private int page;
 
-    private int pageSize;
+    private int limit;
 
-    private int total;
+    private int count;
 
 
     public ApiResult() {
@@ -95,30 +95,30 @@ public class ApiResult<T> implements Serializable {
         return this;
     }
 
-    public int getCurrentPageNo() {
-        return currentPageNo;
+    public int getPage() {
+        return page;
     }
 
-    public ApiResult setCurrentPageNo(int currentPageNo) {
-        this.currentPageNo = currentPageNo;
+    public ApiResult setPage(int page) {
+        this.page = page;
         return this;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public int getLimit() {
+        return limit;
     }
 
-    public ApiResult setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public ApiResult setLimit(int limit) {
+        this.limit = limit;
         return this;
     }
 
-    public int getTotal() {
-        return total;
+    public int getCount() {
+        return count;
     }
 
-    public ApiResult setTotal(int total) {
-        this.total = total;
+    public ApiResult setCount(int count) {
+        this.count = count;
         return this;
     }
 
@@ -146,9 +146,9 @@ public class ApiResult<T> implements Serializable {
                 "code=" + code +
                 ", msg='" + msg + '\'' +
                 ", data=" + data +
-                ", currentPageNo=" + currentPageNo +
-                ", pageSize=" + pageSize +
-                ", total=" + total +
+                ", page=" + page +
+                ", limit=" + limit +
+                ", count=" + count +
                 '}';
     }
 }

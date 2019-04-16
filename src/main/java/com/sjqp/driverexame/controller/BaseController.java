@@ -54,19 +54,13 @@ public class BaseController {
         return "login";
     }
 
-    /** 导航 */
-    @RequestMapping(value = "nav",method = RequestMethod.GET)
-    public String nav(){
-        return "nav";
-    }
 
-    /** 导航 */
     @RequestMapping(value = "userInfo",method = RequestMethod.GET)
     public String userInfo(){
         return "userInfo";
     }
 
-    /** 导航 */
+
     @RequestMapping(value = "order-list",method = RequestMethod.GET)
     public String order(){
         return "order-list";
@@ -107,5 +101,9 @@ public class BaseController {
         model.addAttribute("questionType",request.getParameter("questionType"));
         return "upload-question";
     }
-
+    /**答题记录页面*/
+    @RequestMapping(value = "record-score-list",method = RequestMethod.GET)
+    public String recordScoreList(HttpServletRequest request){
+        return "record-score-list";
+    }
 }

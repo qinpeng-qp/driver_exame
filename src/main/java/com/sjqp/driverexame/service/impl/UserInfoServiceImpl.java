@@ -82,9 +82,9 @@ public class UserInfoServiceImpl implements UserInfoService {
             PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfoList);
             apiResult.setCode(ApiResult.SUCCESS_RESULT);
             apiResult.setData(pageInfo.getList());
-            apiResult.setTotal((int) pageInfo.getTotal());
-            apiResult.setPageSize(pageInfo.getPageSize());
-            apiResult.setCurrentPageNo(pageInfo.getPageNum());
+            apiResult.setCount((int) pageInfo.getTotal());
+            apiResult.setLimit(pageInfo.getPageSize());
+            apiResult.setPage(pageInfo.getPageNum());
         } catch (Exception e) {
             apiResult = new ApiResult<>(ApiResult.FAIL_RESULT, "系统异常");
             logger.error("获取用户名异常:{}", e);
