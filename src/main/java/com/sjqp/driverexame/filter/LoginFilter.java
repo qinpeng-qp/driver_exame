@@ -144,7 +144,6 @@ public class LoginFilter implements Filter {
                 }
                 String pwdMd5 = MD5Encoder.encode(password.trim());
                 String securityCodeInsession = (String) session.getAttribute(SecurityCodeUtil.SECURITY_CODE);
-                logger.info("username: "+userName+"password："+password);
 
                 //登录校验
                 ApiResult<UserInfo> apiResult = executeValidateLogin(userName, pwdMd5, securityCode, securityCodeInsession);

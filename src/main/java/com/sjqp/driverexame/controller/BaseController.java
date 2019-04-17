@@ -106,4 +106,10 @@ public class BaseController {
     public String recordScoreList(HttpServletRequest request){
         return "record-score-list";
     }
+
+    /**后台欢迎页面*/
+    @RequestMapping(value = "welcome",method = RequestMethod.GET)
+    public String welcome(HttpServletRequest request){
+        return "welcome";
+    }
 }
