@@ -96,13 +96,14 @@
     var count;
     var oldCount;
     var element;
+    var itemNumber = 1;
     //利用localStorage缓存数据防止页面动态添加数据刷新后数据丢失,防止刷新后页码归0
     if (localStorage.getItem("pgeNo") !== null) {
         pgeNo = localStorage.getItem("pgeNo");
     }
     //保存题号，刷新时回显选择
     if (localStorage.getItem("itemNumber") !== null) {
-        number = localStorage.getItem("itemNumber");
+        itemNumber = localStorage.getItem("itemNumber");
     }
     if (localStorage.getItem("rightCount") !== null) {
         rightCount = localStorage.getItem("rightCount");
@@ -112,7 +113,8 @@
     }
     /**初始化*/
     $(document).ready(function () {
-        getData(pgeNo);
+        console.log(localStorage.getItem("checked_" + itemNumber));
+        getData(pgeNo,itemNumber);
         layui.use('form', function () {
             form = layui.form;
         });
@@ -120,14 +122,16 @@
             element = layui.element;
         });
         $('.progress').attr("lay-percent", pgeNo - 1 + '/' + count);
-        //需要重新渲染
-        element.render('progress');
-        if (localStorage.getItem("checked_" + number) !== null) {
-            var value = localStorage.getItem("checked_" + number);
+        if (localStorage.getItem("checked_" + itemNumber) !== null) {
+            var value = localStorage.getItem("checked_" + itemNumber);
             //layui的表单更新后需要手动渲染否则看不到效果，另外使用prop而不是attr不然时而有效时而无效
             $("input[name='choice'][value='" + value + "']").prop("checked", true);
             form.render();
         }
+        //需要重新渲染
+        element.render('progress');
+
+
     });
 
     /**下一题*/
@@ -136,23 +140,21 @@
         var checkedValue = $("input[name='choice']:checked").val();
         localStorage.setItem("pgeNo", pgeNo);
         //已经选过且选择正确
-        if (localStorage.getItem("checked_" + number) !== null && answer === checkedValue) {
+        if (localStorage.getItem("checked_" + itemNumber) !== null && answer === checkedValue) {
             //点击上一题，选择正确的再点下一题会出现
             if (rightCount < oldCount) {
                 rightCount++;
             }
             /**当重新选择，然而每次都选错，最终会导致oldCount和rightCount相等，
              这样在判断时可能会出错，所以让oldCount始终比rightCount大*/
-        } else if (localStorage.getItem("checked_" + number) !== null && answer !== checkedValue) {
+        } else if (localStorage.getItem("checked_" + itemNumber) !== null && answer !== checkedValue) {
             //已经选过，但再次选择时选项与答案不相符需要减分
             if (rightCount >= 1) {
                 //保留原始的分数，方便再次选择正确时计数判断
                 oldCount = rightCount;
                 rightCount--;
             }
-            if (rightCount === 0) {
-                localStorage.clear();
-            }
+
         } else {
             //没有选择过，判断答案是否正确
             if (answer === checkedValue) {
@@ -162,9 +164,10 @@
             }
         }
         //保留选择，以便回显
-        localStorage.setItem("checked_" + number, checkedValue);
+        localStorage.setItem("checked_" + itemNumber, checkedValue);
+
         //点击下一题，如果之前已经选择则直接取
-        var temp = number + 1;
+        var temp = itemNumber + 1;
 
         if (localStorage.getItem("checked_" + temp) !== null) {
             var value = localStorage.getItem("checked_" + temp);
@@ -179,10 +182,10 @@
         }
 
         //渲染数据
-        getData(pgeNo);
+        getData(pgeNo,++itemNumber);
 
         //缓存变量
-        localStorage.setItem("itemNumber", temp);
+
         localStorage.setItem("rightCount", rightCount);
 
         //进度条
@@ -193,17 +196,21 @@
     }
     /**上一题*/
     function before() {
-        var num = number - 1;
-        localStorage.setItem("itemNumber", num);
+        itemNumber--;
         if (pgeNo <= 1) {
             pgeNo = 1;
         } else {
             pgeNo--;
         }
         localStorage.setItem("pgeNo", pgeNo);
-        getData(pgeNo);
+
+        if (itemNumber <= 1){
+
+            itemNumber = 1;
+        }
+        getData(pgeNo,itemNumber);
         //获得之前的选择，回显
-        var value = localStorage.getItem("checked_" + num);
+        var value = localStorage.getItem("checked_" + itemNumber);
         //layui的表单更新后需要手动渲染否则看不到效果，另外使用prop而不是attr不然时而有效时而无效
         $("input[name='choice'][value='" + value + "']").prop("checked", true);
         //重新渲染表单
@@ -212,7 +219,7 @@
     }
 
     /**数据渲染*/
-    function getData(page, url) {
+    function getData(page, itemNumber) {
         $.ajax({
             url: basePath + "/error/getError?page=" + page,
             type: "get",
@@ -222,11 +229,11 @@
                 //题目
                 var comment = objs.data[0].comment;
                 var choice = objs.data[0].choice;
-                number = objs.data[0].id;
+               // number = objs.data[0].id;
                 answer = objs.data[0].answer;
                 count = objs.count;
-                localStorage.setItem("answer_" + number, answer);
-                localStorage.setItem("count", count);
+
+
                 //末尾
                 if (count < pgeNo) {
 
@@ -234,12 +241,17 @@
                     $('.button-next').attr("disabled", true);
                     //阻止点击事件
                     $('.button-next').attr("onclick", 'return false');
+                    itemNumber--
                 } else {
                     $('.button-next').removeClass("layui-btn-disabled");
                     $('.button-next').attr("disabled", false);
                     //添加点击事件，加上引号否则会一直调用
                     $('.button-next').attr("onclick", 'next()');
+
                 }
+                localStorage.setItem("itemNumber",itemNumber);
+                localStorage.setItem("answer_" + itemNumber, answer);
+                localStorage.setItem("count", count);
                 pgeNo = objs.page;
                 //将字符串转换为json对象
                 var obj = JSON.parse(choice);
@@ -248,7 +260,7 @@
                 var choiceB = obj.B;
                 var choiceC = obj.C;
                 var choiceD = obj.D;
-                $('.question').text(number + '、' + comment);
+                $('.question').text(itemNumber + '、' + comment);
                 $('.choice-itemA').text(choiceA);
                 $('.choice-itemB').text(choiceB);
                 $('.choice-itemC').text(choiceC);
@@ -372,7 +384,7 @@
     }
 
     function getAnswer() {
-        layer.alert("本题的答案为：" + localStorage.getItem("answer_" + number), {time: 2000}, {icon: 1});
+        layer.alert("本题的答案为：" + localStorage.getItem("answer_" + itemNumber), {time: 1000}, {icon: 1});
     }
 </script>
 </html>

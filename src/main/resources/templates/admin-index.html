@@ -42,20 +42,11 @@
 <body>
 <!-- 顶部开始 -->
 <div class="container">
-    <div class="logo"><a href="admin-index.html">驾考模拟理论考试系统后台管理</a></div>
+    <div class="logo"><a href="../admin/index">驾考模拟理论考试系统后台管理</a></div>
     <div class="left_open" style="margin-left: 10px;">
         <i title="展开左侧栏" class="iconfont">&#xe699;</i>
     </div>
-    <!--<ul class="layui-nav left fast-add" lay-filter="">-->
-        <!--<li class="layui-nav-item">-->
-            <!--<a href="javascript:;">+新增</a>-->
-            <!--<dl class="layui-nav-child"> &lt;!&ndash; 二级菜单 &ndash;&gt;-->
-                <!--<dd><a onclick="x_admin_show('资讯','http://www.baidu.com')"><i class="iconfont">&#xe6a2;</i>资讯</a></dd>-->
-                <!--<dd><a onclick="x_admin_show('图片','http://www.baidu.com')"><i class="iconfont">&#xe6a8;</i>图片</a></dd>-->
-                <!--<dd><a onclick="x_admin_show('用户','http://www.baidu.com')"><i class="iconfont">&#xe6b8;</i>用户</a></dd>-->
-            <!--</dl>-->
-        <!--</li>-->
-    <!--</ul>-->
+
     <ul class="layui-nav right" lay-filter="">
         <li class="layui-nav-item">
             <a href="javascript:;"><div th:if="${session.logined != null}"><p th:text="${session.logined.username}"></p></div></a>
@@ -120,14 +111,14 @@
             <li>
                 <a href="javascript:;">
                     <i class="iconfont">&#xe723;</i>
-                    <cite>分数管理</cite>
+                    <cite>答题管理</cite>
                     <i class="iconfont nav_right">&#xe697;</i>
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a _href="cate.html">
+                        <a _href="/admin-score-list">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>多级分类</cite>
+                            <cite>答题记录</cite>
                         </a>
                     </li>
                 </ul>

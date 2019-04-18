@@ -246,7 +246,6 @@ public class LoginFilter implements Filter {
         String scode = SecurityCodeUtil.generateSecurityCode(imgBuf);
         HttpSession session = request.getSession();
         session.setAttribute(SecurityCodeUtil.SECURITY_CODE, scode);
-        logger.info("sessionId: "+request.getSession().getId()+"产生的验证码："+scode);
         // 禁止图像缓存。
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache");

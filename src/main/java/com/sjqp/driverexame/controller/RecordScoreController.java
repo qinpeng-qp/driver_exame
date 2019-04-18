@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,18 +82,26 @@ public class RecordScoreController {
     public ApiResult<List<RecordScore>> getRecordScore(@RequestParam(value = "page", defaultValue = "1") Integer currentPageNo,
                                                        @RequestParam(value = "limit", defaultValue = "1") Integer pageSize, String username) {
         try {
-            if (StringUtils.isNotEmpty(username)) {
-                RecordScore recordScore = new RecordScore();
-                recordScore.setUsername(username);
+            RecordScore recordScore = new RecordScore();
+            recordScore.setUsername(username);
 
-                return recordScoreService.getRecord(currentPageNo, pageSize, recordScore);
-            }
+            return recordScoreService.getRecord(currentPageNo, pageSize, recordScore);
 
         } catch (Exception e) {
             logger.error("getRecordScore e{}", e);
             return new ApiResult<>(ApiResult.FAIL_RESULT, "系统异常");
         }
-        return null;
+    }
+
+    @DeleteMapping(value = "deleteRecordScore", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiResult deleteRecordScore(@RequestBody List<RecordScore> recordScoreList) {
+        try {
+            return recordScoreService.deleteRecord(recordScoreList);
+        } catch (Exception e) {
+            logger.error("RecordScoreController error {}", e);
+        }
+        return new ApiResult<>(ApiResult.FAIL_RESULT, "系统异常");
     }
 
 }

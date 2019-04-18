@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="src/main/resources/static/layui/css/layui.css"/>
+    <meta charset="UTF-8">
+    <title>答题管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/static/css/font.css}">
+    <link rel="stylesheet" th:href="@{/static/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/jquery-3.3.1/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/static/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/static/js/xadmin.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script th:inline="javascript">
+        var basePath = /*[[${#httpServletRequest.getContextPath()}]]*/;
+
+        function loginOut() {
+            $.ajax({
+                url: basePath + "/api/system/logout",
+                type: "get",
+                success: function (data) {
+                    window.location = (basePath + "/login");
+                },
+                error: function (data) {
+
+                    alert("登出失败")
+                }
+            });
+        }
+
+    </script>
+</head>
+
+<body class="layui-anim layui-anim-up">
+
+
+<a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:10px;margin-right:20px;float:right"
+   href="javascript:location.replace(location.href);" title="刷新">
+    <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+
+<div class="layui-btn-group demoTable" style="margin-top: 10px;">
+    <button class="layui-btn layui-btn-danger" data-type="deleteAll">批量删除</button>
+</div>
+<table class="layui-hide" id="table" lay-filter="table"></table>
+
+
+<script th:inline="javascript">
+
+    function transferType(type) {
+        var resType = "";
+        if (type === '0') {
+            resType = "真题练习"
+        } else if (type === '1') {
+            resType = "错题练习"
+        } else if (type === '2') {
+            resType = "模拟练习"
+        }
+        return resType;
+    }
+
+    //获取session中的对象
+    var loginkey = /*[[${session.logined}]]*/;
+    var username;
+    if (loginkey != null) {
+        username = loginkey.username;
+    }
+    layui.use(['table', 'util'], function () {
+        var table = layui.table;
+        var util = layui.util;
+        //第一个实例
+        table.render({
+            elem: '#table'
+            , height: 'full-100'
+            , url: '/record/getRecordScore' //根据用户名查找答题记录
+            , page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                //,curr: 5 //设定初始在第 5 页
+                , groups: 10 //只显示 1 个连续页码
+                , first: false //不显示首页
+                , last: false //不显示尾页
+
+            }
+            , cols: [
+                [{type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                    , {field: 'username', title: '用户名', width: 120}
+                    , {
+                    field: 'type', title: '题目类型', templet: function (d) {
+                        return transferType(d.type);
+                    }
+                }
+                    , {field: 'totalCount', title: '题目总数'}
+                    , {field: 'score', title: '答对的题目数'}
+                    , {
+                    field: 'createTime', title: '答题时间', templet: function (d) {
+                        return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+                ]
+            ]
+        });
+
+
+        //批量删除
+        var $ = layui.$, active = {
+            deleteAll: function () { //获取选中数据
+                var checkStatus = table.checkStatus('table')
+                    , data = checkStatus.data;
+                layer.confirm('真的删除么', function (index) {
+                    layer.close(index);
+                    $.ajax({
+                        url: '/record/deleteRecordScore'
+                        , type: "delete"
+                        , dataType: "json"
+                        , data: JSON.stringify(data)
+                        , contentType: "application/json"
+                        , success: function (res) {
+                            layer.msg(JSON.stringify(res));
+                        },
+                        error: function (res) {
+                            layer.msg(JSON.stringify(res));
+                        }
+                    });
+                    layer.close(index);
+                    location.replace(location.href);
+                });
+            }
+
+
+        };
+
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+</script>
+</body>
+
+</html>

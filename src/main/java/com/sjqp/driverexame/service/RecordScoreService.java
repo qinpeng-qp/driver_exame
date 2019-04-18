@@ -21,4 +21,8 @@ public interface RecordScoreService {
      * @return
      */
      ApiResult<List<RecordScore>> getRecord(Integer currentPageNo, Integer pageSize,RecordScore recordScore);
+
+
+     ApiResult<List<RecordScore>> deleteRecord(List<RecordScore> recordScoreList);
+
 }

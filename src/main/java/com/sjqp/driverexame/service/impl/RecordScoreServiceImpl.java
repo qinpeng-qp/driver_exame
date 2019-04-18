@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
@@ -51,7 +53,9 @@ public class RecordScoreServiceImpl implements RecordScoreService {
                 PageHelper.startPage(currentPageNo, pageSize);
                 Condition condition = new Condition(RecordScore.class);
                 Example.Criteria conditionCriteria = condition.createCriteria();
-                conditionCriteria.andEqualTo("username",recordScore.getUsername());
+                if (Objects.nonNull(recordScore.getUsername())) {
+                    conditionCriteria.andEqualTo("username", recordScore.getUsername());
+                }
                 condition.setOrderByClause("create_time desc");
                 List<RecordScore> recordScoreList = recordScoreMapper.selectByCondition(condition);
                 PageInfo<RecordScore> pageInfo = new PageInfo<>(recordScoreList);
@@ -67,6 +71,30 @@ public class RecordScoreServiceImpl implements RecordScoreService {
             logger.error("RecordScoreServiceImpl e:{}", e);
         }
         return new ApiResult(ApiResult.FAIL_RESULT, "系统异常");
+    }
+
+    /**
+     * 批量删除
+     * @param recordScoreList
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResult<List<RecordScore>> deleteRecord(List<RecordScore> recordScoreList) {
+        ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
+        try {
+            if (!CollectionUtils.isEmpty(recordScoreList)) {
+                for (RecordScore recordScore : recordScoreList) {
+                    recordScoreMapper.deleteByPrimaryKey(recordScore);
+                }
+            }
+            apiResult.setData(ApiResult.SUCCESS_RESULT);
+            apiResult.setMsg("删除成功");
+        } catch (Exception e) {
+            logger.error("savRealExercise e{}", e);
+            throw e;
+        }
+        return apiResult;
     }
 
 }

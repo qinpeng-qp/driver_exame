@@ -1,6 +1,7 @@
 package com.sjqp.driverexame.controller;
 
 import com.sjqp.driverexame.entity.SimulatedExercise;
+import com.sjqp.driverexame.inc.Const;
 import com.sjqp.driverexame.mapper.SimulatedExerciseMapper;
 import com.sjqp.driverexame.service.SimulatedExerciseService;
 import com.sjqp.driverexame.util.ApiResult;
@@ -32,7 +33,10 @@ public class BaseController {
      * @return
      */
     @RequestMapping(value = "admin/index")
-    public String index(){
+    public String index(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "admin-index";
     }
 
@@ -41,7 +45,10 @@ public class BaseController {
      * @return
      */
     @RequestMapping(value = "index")
-    public String frontIndex(){
+    public String frontIndex(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "index";
     }
 
@@ -56,19 +63,21 @@ public class BaseController {
 
 
     @RequestMapping(value = "userInfo",method = RequestMethod.GET)
-    public String userInfo(){
+    public String userInfo(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "userInfo";
     }
 
 
-    @RequestMapping(value = "order-list",method = RequestMethod.GET)
-    public String order(){
-        return "order-list";
-    }
 
     /** 修改密码页面 */
     @RequestMapping(value = "changePwd",method = RequestMethod.GET)
-    public String memberAdd(){
+    public String changePwd(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "change-pwd";
     }
 
@@ -80,36 +89,64 @@ public class BaseController {
 
     /** 真题列表 */
     @RequestMapping(value = "real-exercise-list",method = RequestMethod.GET)
-    public String realExerciseList(){
+    public String realExerciseList(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "real-exercise-list";
     }
 
     /** 错题列表 */
     @RequestMapping(value = "error-exercise-list",method = RequestMethod.GET)
-    public String errorExerciseList(){
+    public String errorExerciseList(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "error-exercise-list";
     }
 
     /** 模拟练习题列表 */
     @RequestMapping(value = "simulated-exercise-list",method = RequestMethod.GET)
-    public String simulatedExerciseList(){
+    public String simulatedExerciseList(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "simulated-exercise-list";
     }
     /**批量上传题目页面*/
     @RequestMapping(value = "upload-question",method = RequestMethod.GET)
     public String uploadQuestion(HttpServletRequest request, Model model){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         model.addAttribute("questionType",request.getParameter("questionType"));
         return "upload-question";
     }
     /**答题记录页面*/
     @RequestMapping(value = "record-score-list",method = RequestMethod.GET)
     public String recordScoreList(HttpServletRequest request){
+
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "record-score-list";
     }
 
     /**后台欢迎页面*/
     @RequestMapping(value = "welcome",method = RequestMethod.GET)
     public String welcome(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
         return "welcome";
+    }
+
+    /**后台答题管理页面*/
+    @RequestMapping(value = "admin-score-list",method = RequestMethod.GET)
+    public String adminScore(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
+        return "admin-score-list";
     }
 }
