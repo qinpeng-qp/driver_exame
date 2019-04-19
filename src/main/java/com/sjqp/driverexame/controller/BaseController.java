@@ -32,7 +32,7 @@ public class BaseController {
      * 管理后台页面
      * @return
      */
-    @RequestMapping(value = "admin/index")
+    @RequestMapping(value = "/api/adminModule/admin/index")
     public String index(HttpServletRequest request){
         if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
             return "login";
@@ -70,6 +70,14 @@ public class BaseController {
         return "userInfo";
     }
 
+    @RequestMapping(value = "roleInfo",method = RequestMethod.GET)
+    public String roleInfo(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
+        return "roleInfo";
+    }
+
 
 
     /** 修改密码页面 */
@@ -80,6 +88,16 @@ public class BaseController {
         }
         return "change-pwd";
     }
+
+    /** 修改角色页面 */
+    @RequestMapping(value = "changeRole",method = RequestMethod.GET)
+    public String changeRole(HttpServletRequest request){
+        if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
+            return "login";
+        }
+        return "change-role";
+    }
+
 
     /** 创建用户页面 */
     @RequestMapping(value = "user-add",method = RequestMethod.GET)

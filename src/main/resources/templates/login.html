@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>后台登录-X-admin2.0</title>
+    <title>后台登录</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -46,8 +46,13 @@
 
     var basePath = /*[[${#httpServletRequest.getContextPath()}]]*/;
 
-    console.info(basePath);
-
+    var loginkey = /*[[${session.logined}]]*/;
+    //根据权限来选择
+    if (loginkey != null && loginkey.roleId == '1'){
+        window.location = (basePath +"/admin/index");
+    }else if (loginkey != null && loginkey.roleId == '2'){
+        window.location = (basePath +"/index");
+    }
     $(function () {
         layui.use('form', function () {
             var form = layui.form;
@@ -55,11 +60,12 @@
                 var locationAddress = "/index";
                 var priority = $("input[name='priority']:checked").val();
                 console.info(priority);
-
+                var url = "/api/user/login";
                 //主页
                 var locationAddress = basePath+"/index";
                 if (priority === '管理员') {
-                    locationAddress = basePath+"/admin/index";
+                    locationAddress = basePath+"/api/adminModule/admin/index";
+                    url = "/api/admin/login"
                 }
                 var formObject = {};
                 var formArray = $("form").serializeArray();
@@ -73,7 +79,7 @@
                 var formJson = JSON.stringify(formObject);
 
                 $.ajax({
-                    url: basePath+"/api/system/login",
+                    url: basePath+url,
                     type: "POST",
                     data: formJson,
                     dataType: "json",
@@ -84,11 +90,17 @@
                                 location.href = locationAddress;
                             });
                         } else {
-                            layer.msg(JSON.stringify(resp), {icon: 2})
+                            layer.msg(JSON.stringify(resp.msg), {icon: 2},function () {
+                                location.replace(location.href);
+                            })
+
                         }
                     },
                     error: function (resp) {
-                        alert(JSON.stringify(resp));
+                        layer.msg(JSON.stringify(resp.msg), {icon: 2},function () {
+                            location.replace(location.href);
+                        })
+
                     }
                 });
                 return false;

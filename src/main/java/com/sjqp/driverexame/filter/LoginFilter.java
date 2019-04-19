@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author jiashiran on 2019/1/8.
@@ -146,7 +147,7 @@ public class LoginFilter implements Filter {
                 String securityCodeInsession = (String) session.getAttribute(SecurityCodeUtil.SECURITY_CODE);
 
                 //登录校验
-                ApiResult<UserInfo> apiResult = executeValidateLogin(userName, pwdMd5, securityCode, securityCodeInsession);
+                ApiResult<UserInfo> apiResult = executeValidateLogin(request,userName, pwdMd5, securityCode, securityCodeInsession);
                 if (apiResult != null) {
                     if (apiResult.getCode() == ApiResult.FAIL_RESULT) {
                         //登录失败
@@ -200,38 +201,16 @@ public class LoginFilter implements Filter {
      * 根据用户信息判断是否有对应接口的权限
      */
     private boolean volidate(HttpServletRequest request, UserInfo userInfo) {
-        boolean flag = false;
+        boolean flag = true;
         String urlPath = request.getRequestURI();
-        List<Integer> moduleIdList = new ArrayList<>();
-        if (userInfo != null) {
+        if (StringUtils.isNotEmpty(urlPath) && urlPath.contains("adminModule")){
             Integer roleId = userInfo.getRoleId();
-            /**
-             * 从缓存获得角色模块信息
-             */
-            List<RoleModule> roleModuleList = JSON.parseArray(redisService.get(CacheKey.ROLE_MODULE), RoleModule.class);
-            if (roleId != null && !CollectionUtils.isEmpty(roleModuleList)) {
-                for (RoleModule roleModule : roleModuleList) {
-                    if (roleId.equals(roleModule.getRoleId())) {
-                        //将通以roleId下的不同模块Id加入集合中
-                        moduleIdList.add(roleModule.getModuleId());
-                    }
-                }
-            }
-            /**
-             * 模块信息
-             */
-            List<Module> moduleList = JSON.parseArray(redisService.get(CacheKey.MODULE), Module.class);
-            //获得对应模块Id的url前缀
-            List<String> curlList = getPrfixUrl(moduleList,moduleIdList);
-            if (!CollectionUtils.isEmpty(curlList)) {
-                for (String url : curlList) {
-                    if (urlPath != null && urlPath.contains(url)) {
-                        flag = true;
-                        break;
-                    }
-                }
+            //非管理员
+            if (!roleId.equals(1)){
+                flag = false;
             }
         }
+
         return flag;
     }
 
@@ -287,7 +266,7 @@ public class LoginFilter implements Filter {
      * @return
      * @throws Exception
      */
-    public ApiResult<UserInfo> executeValidateLogin(String userName, String pwdMd5, String securityCode, String securityCodeInSession) throws Exception {
+    public ApiResult<UserInfo> executeValidateLogin(HttpServletRequest request,String userName, String pwdMd5, String securityCode, String securityCodeInSession) throws Exception {
 
         ApiResult<UserInfo> apiResult = new ApiResult<UserInfo>();
         try {
@@ -306,9 +285,16 @@ public class LoginFilter implements Filter {
             if (!CollectionUtils.isEmpty(userInfoList)) {
                 for (UserInfo userInfo : userInfoList) {
                     if (userName.equals(userInfo.getUsername()) && pwdMd5.equals(userInfo.getPassword())) {
-                        apiResult.setCode(ApiResult.SUCCESS_RESULT);
-                        apiResult.setMsg("登录成功");
-                        apiResult.setData(userInfo);
+                        //非管理员不能登录，管理员roleId 为1
+                        if (!userInfo.getRoleId().equals(1) && request.getRequestURI().contains("admin")){
+                            apiResult.setCode(ApiResult.FAIL_RESULT);
+                            apiResult.setMsg("无权限");
+                            apiResult.setData(userInfo);
+                        }else {
+                            apiResult.setCode(ApiResult.SUCCESS_RESULT);
+                            apiResult.setMsg("登录成功");
+                            apiResult.setData(userInfo);
+                        }
                         return apiResult;
                     }
                 }

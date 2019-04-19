@@ -3,6 +3,7 @@ package com.sjqp.driverexame.service;
 
 
 import com.sjqp.driverexame.entity.UserInfo;
+import com.sjqp.driverexame.entity.dto.UserInfoDto;
 import com.sjqp.driverexame.util.ApiResult;
 
 import java.util.List;
@@ -49,4 +50,11 @@ public interface UserInfoService {
      * @return
      */
     ApiResult deleteAccount(Integer userId);
+
+    /**
+     * 修改角色id
+     * @param userInfoDto
+     * @return
+     */
+    ApiResult updateRole(UserInfoDto userInfoDto);
 }

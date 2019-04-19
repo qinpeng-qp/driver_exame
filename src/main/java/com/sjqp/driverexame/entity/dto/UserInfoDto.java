@@ -1,6 +1,8 @@
 package com.sjqp.driverexame.entity.dto;
 
-public class UserInfoDto {
+import com.sjqp.driverexame.entity.UserInfo;
+
+public class UserInfoDto extends UserInfo{
 
     private String role;
 

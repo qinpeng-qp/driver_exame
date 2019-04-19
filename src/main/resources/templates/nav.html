@@ -6,21 +6,14 @@
         <div class="logo"><a href="/index">驾考模拟理论考试系统</a></div>
         <div class="logo" style="font-size: 20px;"><a href="/index">首页</a></div>
         <ul class="layui-nav left fast-add" lay-filter="">
-            <!--<li class="layui-nav-item">-->
-                <!--&lt;!&ndash;<a href="/index" style="font-size: large">首页</a>&ndash;&gt;-->
-                <!--&lt;!&ndash;<dl class="layui-nav-child"> &lt;!&ndash; 二级菜单 &ndash;&gt;&ndash;&gt;-->
-                    <!--&lt;!&ndash;<dd><a onclick="x_admin_show('资讯','http://www.baidu.com')"><i class="iconfont">&#xe6a2;</i>资讯</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</dd>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<dd><a onclick="x_admin_show('图片','http://www.baidu.com')"><i class="iconfont">&#xe6a8;</i>图片</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</dd>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<dd><a onclick="x_admin_show('用户','http://www.baidu.com')"><i class="iconfont">&#xe6b8;</i>用户</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</dd>&ndash;&gt;-->
-                <!--&lt;!&ndash;</dl>&ndash;&gt;-->
-            <!--</li>-->
+            <li class="layui-nav-item">
+                <a href="javascript:;">关于</a>
+
+            </li>
         </ul>
         <ul class="layui-nav right" lay-filter="">
             <li class="layui-nav-item">
-                <a href="javascript:;"><div th:if="${session.logined != null}"><p th:text="${session.logined.username}"></p></div> </a>
+                <a href="javascript:;"><div th:if="${session.logined != null}"><p th:text="欢迎您+${session.logined.username}"></p></div> </a>
                 <dl class="layui-nav-child"> <!-- 二级菜单 -->
                     <dd><a href="javascript:;" onclick="loginOut()">退出</a></dd>
                 </dl>

@@ -97,7 +97,7 @@
     var number;
     var form;
     var rightCount = 0;
-    var count;
+    var count = 0;
     var oldCount;
     var element;
     var itemNumber = 1;
@@ -137,6 +137,12 @@
 
 
     });
+
+    //执行页面跳转前执行弹框提示，返回空字符即可无法改变浏览器默认样式
+    window.onbeforeunload = function () {
+
+        return "";
+    };
 
     /**下一题*/
     function next() {

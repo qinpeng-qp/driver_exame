@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sjqp.driverexame.entity.Role;
 import com.sjqp.driverexame.entity.UserInfo;
+import com.sjqp.driverexame.entity.dto.UserInfoDto;
 import com.sjqp.driverexame.mapper.RoleMapper;
 import com.sjqp.driverexame.mapper.UserInfoMapper;
 import com.sjqp.driverexame.service.UserInfoService;
@@ -179,6 +180,33 @@ public class UserInfoServiceImpl implements UserInfoService {
             apiResult.setCode(ApiResult.FAIL_RESULT);
             apiResult.setMsg("系统异常");
             logger.error("UserInfoServiceImpl deletAccount e{}",e);
+        }
+        return apiResult;
+    }
+
+    @Override
+    public ApiResult updateRole(UserInfoDto userInfoDto) {
+
+        ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
+        try {
+            if (Objects.nonNull(userInfoDto.getId())){
+                UserInfo userInfo = new UserInfo();
+                userInfo.setId(userInfoDto.getId());
+                userInfo.setRoleId(userInfoDto.getRoleId());
+                int row = userInfoMapper.updateByPrimaryKeySelective(userInfo);
+                if (row > 0){
+                    apiResult.setCode(ApiResult.SUCCESS_RESULT);
+                    apiResult.setMsg("更新成功");
+                }else {
+                    apiResult.setCode(ApiResult.FAIL_RESULT);
+                    apiResult.setMsg("更新失败");
+                    logger.error("更新失败，用户id为{}",userInfo.getId());
+                }
+            }
+        } catch (Exception e) {
+            apiResult.setCode(ApiResult.FAIL_RESULT);
+            apiResult.setMsg("系统异常");
+            logger.error("UserInfoServiceImpl updateRole e{}",e);
         }
         return apiResult;
     }

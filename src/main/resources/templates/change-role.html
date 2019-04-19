@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/static/css/font.css}">
+    <link rel="stylesheet" th:href="@{/static/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/static/jquery-3.3.1/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/static/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/static/js/xadmin.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body layui-anim layui-anim-up layui-">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="font-size: 18px">角色:</label>
+                <div class="layui-input-inline">
+                    <select id="roleId" name="roleId" lay-filter="">
+                        <option value="1" selected="">管理员</option>
+                        <option value="2">普通用户</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button class="layui-btn"  style="margin-left: 150px;" lay-filter="add" lay-submit="">
+            修改
+        </button>
+</form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            var roleId = $('#roleId').val();
+            console.log(JSON.stringify({"roleId": roleId}));
+
+            //发异步，把数据提交给php
+            $.ajax({
+                url: '/api/userModule/updateRole'
+                , type: "put"
+                , data: JSON.stringify({"roleId": roleId})
+                , contentType: 'application/json;charset=UTF-8'
+                , dataType: 'json'
+                , success: function (res) {
+                    layer.alert(res.msg, {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                },
+                error: function (res) {
+                    layer.msg(JSON.stringify(res));
+                }
+            });
+
+            return false;
+        });
+
+
+    });
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

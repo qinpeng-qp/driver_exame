@@ -7,9 +7,9 @@ public class Const {
 
     public final static String USERNAME_PWD_NOT_EMPTY = "用户名或密码不能为空";
 
-    public static String LOGIN_URL = "/api/system/login";
+    public static String LOGIN_URL = "/api/user/login";
 
-    public static String ADMIN_LOGIN_URL = "/api/system/admin/login";
+    public static String ADMIN_LOGIN_URL = "/api/admin/login";
 
     public static String  SECURITY_CODE_URL = "/api/login/securitycode";
 
