@@ -171,10 +171,10 @@ public class UserInfoController {
 
 
     @PutMapping(value = "/updateRole", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ApiResult updateRole(@RequestBody UserInfoDto userInfoDto) {
+    public ApiResult updateRole(@RequestBody UserInfo userInfo) {
         ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
         try {
-            return userInfoService.updateRole(userInfoDto);
+            return userInfoService.updateRole(userInfo);
         } catch (Exception e) {
             logger.error("UserInfoController updatePwd e:{}", e);
             apiResult.setMsg("系统异常");

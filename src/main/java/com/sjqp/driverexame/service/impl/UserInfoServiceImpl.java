@@ -185,14 +185,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ApiResult updateRole(UserInfoDto userInfoDto) {
+    public ApiResult updateRole(UserInfo userInfo) {
 
         ApiResult apiResult = new ApiResult(ApiResult.FAIL_RESULT);
         try {
-            if (Objects.nonNull(userInfoDto.getId())){
-                UserInfo userInfo = new UserInfo();
-                userInfo.setId(userInfoDto.getId());
-                userInfo.setRoleId(userInfoDto.getRoleId());
+            if (Objects.nonNull(userInfo.getId())){
+
                 int row = userInfoMapper.updateByPrimaryKeySelective(userInfo);
                 if (row > 0){
                     apiResult.setCode(ApiResult.SUCCESS_RESULT);

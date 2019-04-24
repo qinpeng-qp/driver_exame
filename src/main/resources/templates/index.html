@@ -14,7 +14,6 @@
     <link rel="stylesheet" th:href="@{/static/css/font.css}">
     <link rel="stylesheet" th:href="@{/static/css/xadmin.css}">
     <link rel="stylesheet" th:href="@{/static/css/comment.css}">
-    <link rel="stylesheet" th:href="@{/static/css/index.css}">
 
     <script type="text/javascript" th:src="@{/static/jquery-3.3.1/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/static/lib/layui/layui.js}" charset="utf-8"></script>
@@ -51,12 +50,10 @@
 <div th:replace="nav.html :: nav"></div>
 <!--轮播图开始-->
 <div class="layui-carousel" id="test1" lay-filter="test1">
-    <div carousel-item>
-        <div>条目1</div>
-        <div>条目2</div>
-        <div>条目3</div>
-        <div>条目4</div>
-        <div>条目5</div>
+    <div carousel-item >
+        <div><img th:src="@{/static/images/bike.gif}" width="100%" height="350px"></div>
+
+
     </div>
 </div>
 <!--轮播图结束-->
@@ -114,7 +111,7 @@
 <hr>
 <!--中部结束-->
 <!--底部-->
-<div class="footer">
+<div class="footer" style="line-height: 100px">
     <div>Copyright ©qinpeng All Rights Reserved</div>
 </div>
 <script>
@@ -125,8 +122,10 @@
         carousel.render({
             elem: '#test1'
             , width: '100%' //设置容器宽度
+            ,height:'350px'
             , arrow: 'always' //始终显示箭头
             //,anim: 'updown' //切换动画方式
+            ,interval: 5000
         });
     });
 

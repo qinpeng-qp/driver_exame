@@ -42,8 +42,9 @@
 </script>
 
 <script th:inline="javascript">
-    layui.use('table', function () {
+    layui.use(['table', 'util'], function () {
         var table = layui.table;
+        var util = layui.util;
 
         //第一个实例
         table.render({
@@ -52,75 +53,76 @@
             , url: '/api/userModule/getUsername/' //数据接口
             , page: true //开启分页
             , cols: [
-                [   {type:'checkbox', fixed: 'left'}
-                    ,{field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                [{type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
                     , {field: 'username', title: '用户名', width: 120}
                     , {field: 'mobile', title: 'mobile'}
                     , {field: 'email', title: 'email'}
                     , {field: 'roleId', title: 'roleId'}
-                    , {field: 'createTime', title: 'createTime'}
-                    ,{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
+                    , {
+                    field: 'createTime', title: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+                    , {fixed: 'right', width: 178, align: 'center', toolbar: '#barDemo'}
                 ]
             ]
         });
 
         //监听表格复选框选择
-        table.on('checkbox(demo)', function(obj){
-          console.log(obj.data)
+        table.on('checkbox(demo)', function (obj) {
+            console.log(obj.data)
         });
         //监听工具条
-        table.on('tool(demo)', function(obj){
+        table.on('tool(demo)', function (obj) {
             var data = obj.data;
             console.log(obj.data)
-            if(obj.event === 'detail'){
-                layer.msg('ID：'+ data.id + ' 的查看操作');
-            } else if(obj.event === 'add'){
-                layer.msg('add：'+ data.id + ' 的查看操作');
-            }else if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
+
+            if (obj.event === 'del') {
+                layer.confirm('真的删除么', function (index) {
                     obj.del();
                     $.ajax({
-                        url:'/api/userModule/userInfo/'+data.id
-                        ,type:"delete"
+                        url: '/api/userModule/userInfo/' + data.id
+                        , type: "delete"
                         ,success:function (res) {
-                            layer.msg(JSON.stringify(res));
+                            layer.alert(res.msg, {icon: 6});
                         },
                         error:function (res) {
-                            layer.msg(JSON.stringify(res));
+                            layer.alert(res.msg, {icon: 5});
                         }
                     });
                     layer.close(index);
                 });
-            } else if(obj.event === 'edit'){
-                x_admin_show("修改密码",'./changePwd');
+            } else if (obj.event === 'edit') {
+                x_admin_show("修改密码", './changePwd?id=' + data.id, 420, 300);
             }
         });
 
         var $ = layui.$, active = {
-            getCheckData: function(){ //获取选中数据
+            getCheckData: function () { //获取选中数据
                 var checkStatus = table.checkStatus('idTest')
-                    ,data = checkStatus.data;
+                    , data = checkStatus.data;
                 layer.alert(JSON.stringify(data));
             }
-            ,getCheckLength: function(){ //获取选中数目
+            , getCheckLength: function () { //获取选中数目
                 var checkStatus = table.checkStatus('idTest')
-                    ,data = checkStatus.data;
-                layer.msg('选中了：'+ data.length + ' 个');
+                    , data = checkStatus.data;
+                layer.msg('选中了：' + data.length + ' 个');
             }
-            ,isAll: function(){ //验证是否全选
+            , isAll: function () { //验证是否全选
                 var checkStatus = table.checkStatus('idTest');
-                layer.msg(checkStatus.isAll ? '全选': '未全选')
+                layer.msg(checkStatus.isAll ? '全选' : '未全选')
             }
 
         };
 
-        $('.demoTable .layui-btn').on('click', function(){
+        $('.demoTable .layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
     });
-    $('#add').on('click',function () {
-        x_admin_show("创建用户",'/user-add');
+    $('#add').on('click', function () {
+        x_admin_show("创建用户", '/user-add',400,500);
     })
 </script>
 </body>

@@ -53,8 +53,8 @@ public interface UserInfoService {
 
     /**
      * 修改角色id
-     * @param userInfoDto
+     * @param userInfo
      * @return
      */
-    ApiResult updateRole(UserInfoDto userInfoDto);
+    ApiResult updateRole(UserInfo userInfo);
 }

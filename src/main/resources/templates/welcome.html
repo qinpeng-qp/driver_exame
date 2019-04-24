@@ -20,6 +20,23 @@
             window.onload=function(){
                 //每1秒刷新时间
                 setInterval("NowTime()",1000);
+
+                $.ajax({
+                    url: '/data/getDataCount',
+                    type: "get",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (resp) {
+                        $('#questionCount').html(resp.questionCount);
+                        $('#userCount').html(resp.userCount);
+                    },
+                    error: function (resp) {
+                        layer.msg(JSON.stringify(resp.msg), {icon: 2},function () {
+                            location.replace(location.href);
+                        })
+
+                    }
+                });
             };
             function NowTime(){
                 //获取年月日
@@ -47,6 +64,7 @@
 
 
             }
+
         </script>
 
     </head>
@@ -70,14 +88,14 @@
                                             <a href="javascript:;" class="x-admin-backlog-body">
                                                 <h3>题目总数数</h3>
                                                 <p>
-                                                    <cite>66</cite></p>
+                                                    <cite id="questionCount">66</cite></p>
                                             </a>
                                         </li>
                                         <li class="layui-col-xs2">
                                             <a href="javascript:;" class="x-admin-backlog-body">
                                                 <h3>用户数</h3>
                                                 <p>
-                                                    <cite>12</cite></p>
+                                                    <cite id="userCount">12</cite></p>
                                             </a>
                                         </li>
                                     </ul>

@@ -40,7 +40,7 @@
         </button>
 </form>
 </div>
-<script>
+<script th:inline="javascript">
     layui.use(['form', 'layer'], function () {
         $ = layui.jquery;
         var form = layui.form
@@ -50,13 +50,14 @@
         //监听提交
         form.on('submit(add)', function (data) {
             var roleId = $('#roleId').val();
-            console.log(JSON.stringify({"roleId": roleId}));
+            var userId = [[${userId}]];
+            console.log(JSON.stringify({"roleId": roleId,"id":userId}));
 
             //发异步，把数据提交给php
             $.ajax({
                 url: '/api/userModule/updateRole'
                 , type: "put"
-                , data: JSON.stringify({"roleId": roleId})
+                , data: JSON.stringify({"roleId": roleId,"id":userId})
                 , contentType: 'application/json;charset=UTF-8'
                 , dataType: 'json'
                 , success: function (res) {
@@ -68,7 +69,7 @@
                     });
                 },
                 error: function (res) {
-                    layer.msg(JSON.stringify(res));
+                    layer.msg(JSON.stringify(res.msg),{icon:5});
                 }
             });
 
@@ -78,13 +79,7 @@
 
     });
 </script>
-<script>var _hmt = _hmt || [];
-(function () {
-    var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-})();</script>
+
 </body>
 
 </html>

@@ -27,6 +27,7 @@ public class SecurityCodeUtil {
 												'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
 												'y', 'z', '2', '3', '4', '5', '6', '7', '8', '9' };
 
+	public SecurityCodeUtil(){}
 
 	/**
 	 * 生成验证码。

@@ -50,8 +50,9 @@
         return resType;
     }
 
-    layui.use('table', function () {
+    layui.use(['table','util'], function () {
         var table = layui.table;
+        var util = layui.util;
 
         //第一个实例
         table.render({
@@ -71,7 +72,7 @@
                     }
 
                 }
-                    , {field: 'createTime', title: 'createTime'}
+                    , {field: 'createTime', title: 'createTime',templet:function(d){return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");}}
                     , {fixed: 'right', width: 178, align: 'center', toolbar: '#barDemo'}
                 ]
             ]
@@ -84,28 +85,23 @@
         //监听工具条
         table.on('tool(demo)', function (obj) {
             var data = obj.data;
-            console.log(obj.data)
-            if (obj.event === 'detail') {
-                layer.msg('ID：' + data.id + ' 的查看操作');
-            } else if (obj.event === 'add') {
-                layer.msg('add：' + data.id + ' 的查看操作');
-            } else if (obj.event === 'del') {
+           if (obj.event === 'del') {
                 layer.confirm('真的删除行么', function (index) {
                     obj.del();
                     $.ajax({
                         url: '/api/userModule/userInfo/' + data.id
                         , type: "delete"
-                        , success: function (res) {
-                            layer.msg(JSON.stringify(res));
+                        ,success:function (res) {
+                            layer.alert(res.msg, {icon: 6});
                         },
-                        error: function (res) {
-                            layer.msg(JSON.stringify(res));
+                        error:function (res) {
+                            layer.alert(res.msg, {icon: 5});
                         }
                     });
                     layer.close(index);
                 });
             } else if (obj.event === 'edit') {
-                x_admin_show("修改权限", './changeRole',400,300);
+                x_admin_show("修改权限", './changeRole?userId='+data.id,400,300);
             }
         });
 
@@ -133,9 +129,7 @@
         });
     })
     ;
-    $('#add').on('click', function () {
-        x_admin_show("创建用户", '/user-add');
-    })
+
 </script>
 </body>
 

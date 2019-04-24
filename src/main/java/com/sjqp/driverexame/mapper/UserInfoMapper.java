@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+/**
+ * @author qinpeng
+ */
 @Mapper
 public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
@@ -15,4 +18,7 @@ public interface UserInfoMapper extends BaseMapper<UserInfo> {
      */
     @Select("select id,username from user_info order by id")
     List<UserInfo> getUserInfo();
+
+
+
 }

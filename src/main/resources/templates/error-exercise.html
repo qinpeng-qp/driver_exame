@@ -230,7 +230,6 @@
             url: basePath + "/error/getError?page=" + page,
             type: "get",
             success: function (data) {
-                console.log(JSON.stringify(data));
                 var objs = eval(data);
                 //题目
                 var comment = objs.data[0].comment;
@@ -258,7 +257,7 @@
                 localStorage.setItem("itemNumber",itemNumber);
                 localStorage.setItem("answer_" + itemNumber, answer);
                 localStorage.setItem("count", count);
-                pgeNo = objs.page;
+               
                 //将字符串转换为json对象
                 var obj = JSON.parse(choice);
                 //选项

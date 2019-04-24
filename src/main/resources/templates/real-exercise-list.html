@@ -38,81 +38,77 @@
 </script>
 
 <script th:inline="javascript">
-    layui.use(['table','util'], function () {
+    layui.use(['table', 'util'], function () {
         var table = layui.table;
         var util = layui.util;
         //第一个实例
         table.render({
             elem: '#table'
-            ,height:'full-100'
+            , height: 'full-100'
             , url: '/real/getReal' //数据接口
-            ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+            , page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
                 //,curr: 5 //设定初始在第 5 页
-                ,groups: 10 //只显示 1 个连续页码
-                ,first: false //不显示首页
-                ,last: false //不显示尾页
+                , groups: 10 //只显示 1 个连续页码
+                , first: false //不显示首页
+                , last: false //不显示尾页
 
             }
             , cols: [
-                [   {type:'checkbox', fixed: 'left'}
-                    ,{field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
-                    , {field: 'comment', title: '题目', edit: 'text',width: 120}
-                    , {field: 'choice', title: '选项',edit: 'text'}
-                    , {field: 'answer', title: '答案',edit: 'text'}
-                    , {field: 'createTime', title: 'createTime',templet:function(d){return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");}}
-                    ,{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
+                [{type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                    , {field: 'comment', title: '题目', edit: 'text', width: 120}
+                    , {field: 'choice', title: '选项', edit: 'text'}
+                    , {field: 'answer', title: '答案', edit: 'text'}
+                    , {
+                    field: 'createTime', title: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+                    , {fixed: 'right', width: 178, align: 'center', toolbar: '#barDemo'}
                 ]
             ]
         });
 
-        //监听表格复选框选择
-        table.on('checkbox(table)', function(obj){
-
-        });
         //监听工具条
-        table.on('tool(table)', function(obj){
+        table.on('tool(table)', function (obj) {
             var data = obj.data;
 
-            var jsonArray=[];
+            var jsonArray = [];
             //json数组
             jsonArray.push(data);
-            if(obj.event === 'detail'){
-                layer.msg('ID：'+ data.id + ' 的查看操作');
-            } else if(obj.event === 'add'){
-                layer.msg('add：'+ data.id + ' 的查看操作');
-            }else if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
+            if (obj.event === 'del') {
+                layer.confirm('真的删除么', function (index) {
                     obj.del();
                     $.ajax({
-                        url:'/real/deleteReal/'
-                        ,type:"delete"
-                        ,dataType:"json"
-                        ,data:JSON.stringify(jsonArray)
-                        ,contentType:"application/json"
-                        ,success:function (res) {
-                            layer.msg(JSON.stringify(res));
+                        url: '/real/deleteReal/'
+                        , type: "delete"
+                        , dataType: "json"
+                        , data: JSON.stringify(jsonArray)
+                        , contentType: "application/json"
+                        , success: function (res) {
+                            layer.alert(res.msg, {icon: 6});
                         },
-                        error:function (res) {
-                            layer.msg(JSON.stringify(res));
+                        error: function (res) {
+                            layer.alert(res.msg, {icon: 5});
                         }
                     });
                     layer.close(index);
                 });
-            } else if(obj.event === 'edit'){
-                layer.confirm('真的要修改么', function(index){
+            } else if (obj.event === 'edit') {
+                layer.confirm('真的要修改么', function (index) {
                     layer.close(index);
                     $.ajax({
-                        url:'/real/updateReal/'
-                        ,type:"put"
-                        ,dataType:"json"
-                        ,data:JSON.stringify(data)
-                        ,contentType:"application/json"
-                        ,success:function (data) {
+                        url: '/real/updateReal/'
+                        , type: "put"
+                        , dataType: "json"
+                        , data: JSON.stringify(data)
+                        , contentType: "application/json"
+                        , success: function (data) {
                             layer.msg(JSON.stringify(data));
                             location.replace(location.href);
                         },
-                        error:function (data) {
+                        error: function (data) {
                             layer.msg(JSON.stringify(data));
                             location.replace(location.href);
 
@@ -126,22 +122,21 @@
         });
 
         var $ = layui.$, active = {
-            deleteAll: function(){ //获取选中数据
+            deleteAll: function () { //获取选中数据
                 var checkStatus = table.checkStatus('table')
-                    ,data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-                layer.confirm('真的删除么', function(index){
+                    , data = checkStatus.data;
+                layer.confirm('真的删除么', function (index) {
                     layer.close(index);
                     $.ajax({
-                        url:'/real/deleteReal/'
-                        ,type:"delete"
-                        ,dataType:"json"
-                        ,data:JSON.stringify(data)
-                        ,contentType:"application/json"
-                        ,success:function (res) {
+                        url: '/real/deleteReal/'
+                        , type: "delete"
+                        , dataType: "json"
+                        , data: JSON.stringify(data)
+                        , contentType: "application/json"
+                        , success: function (res) {
                             layer.msg(JSON.stringify(res));
                         },
-                        error:function (res) {
+                        error: function (res) {
                             layer.msg(JSON.stringify(res));
                         }
                     });
@@ -149,29 +144,29 @@
                     location.replace(location.href);
                 });
             }
-            ,getCheckLength: function(){ //获取选中数目
+            , getCheckLength: function () { //获取选中数目
                 var checkStatus = table.checkStatus('table')
-                    ,data = checkStatus.data;
-                layer.msg('选中了：'+ data.length + ' 个');
+                    , data = checkStatus.data;
+                layer.msg('选中了：' + data.length + ' 个');
             }
-            ,isAll: function(){ //验证是否全选
+            , isAll: function () { //验证是否全选
                 var checkStatus = table.checkStatus('table');
-                layer.msg(checkStatus.isAll ? '全选': '未全选')
+                layer.msg(checkStatus.isAll ? '全选' : '未全选')
             }
 
         };
 
-        $('.demoTable .layui-btn').on('click', function(){
+        $('.demoTable .layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
 
         //监听单元格编辑
-        table.on('edit(table)', function(obj){
+        table.on('edit(table)', function (obj) {
             var value = obj.value //得到修改后的值
-                ,data = obj.data //得到所在行所有键值
-                ,field = obj.field; //得到字段
-            layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value);
 
         });
     });

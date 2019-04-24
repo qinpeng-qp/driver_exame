@@ -33,7 +33,7 @@
         <hr class="hr15">
         <input id="securityCode" name="securityCode" lay-verify="required" placeholder="验证码" type="text"
                class="layui-input" style="width: auto;float: left;">
-        <img th:src="@{/api/login/securitycode}" alt="验证码"  align="bottom" style="cursor:pointer;" title="看不清可单击图片刷新" onclick="this.src='/api/login/securitycode?d='+Math.random();" />
+        <img th:src="@{/api/login/securitycode}" alt="验证码"  align="bottom" style="margin-left: 19px;cursor:pointer;" title="看不清可单击图片刷新" onclick="this.src='/api/login/securitycode?d='+Math.random();" />
         <!--<img th:src="@{/api/login/securitycode}" onclick="this.src='code.jsp?d='+Math.random();">-->
         <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
         <hr class="hr20">

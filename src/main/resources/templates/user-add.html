@@ -76,14 +76,16 @@
                 <span class="x-red">*</span>角色
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_role" name="roleId" required="" lay-verify="role"
-                       autocomplete="off" class="layui-input">
+                <select id="L_role" name="roleId" lay-filter="" lay-verify="role">
+                    <option value="1" selected="">管理员</option>
+                    <option value="2">普通用户</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
             <label for="L_repass" class="layui-form-label">
             </label>
-            <button  class="layui-btn" lay-filter="add" lay-submit="">
+            <button  class="layui-btn" style="margin-left: 50px;" lay-filter="add" lay-submit="">
                创建
             </button>
         </div>
@@ -138,7 +140,7 @@
                     });
                 },
                 error:function (res) {
-                    layer.msg(JSON.stringify(res.msg));
+                    layer.msg(JSON.stringify(res.msg),{icon:5});
                 }
             });
 

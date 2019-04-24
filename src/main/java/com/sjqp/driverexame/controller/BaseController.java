@@ -82,19 +82,23 @@ public class BaseController {
 
     /** 修改密码页面 */
     @RequestMapping(value = "changePwd",method = RequestMethod.GET)
-    public String changePwd(HttpServletRequest request){
+    public String changePwd(HttpServletRequest request,Model model){
         if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
             return "login";
         }
+        String id = request.getParameter("id");
+        model.addAttribute("id",id);
         return "change-pwd";
     }
 
     /** 修改角色页面 */
     @RequestMapping(value = "changeRole",method = RequestMethod.GET)
-    public String changeRole(HttpServletRequest request){
+    public String changeRole(HttpServletRequest request,Model model){
         if (request.getSession().getAttribute(Const.LOGINED_KEY) == null){
             return "login";
         }
+        model.addAttribute("userId",request.getParameter("userId"));
+
         return "change-role";
     }
 
